@@ -1,0 +1,168 @@
+project(OpenIGTLinkSimulator)
+
+cmake_minimum_required(VERSION 2.8.6)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
+find_package(OpenIGTLink REQUIRED)
+find_package(Qt4 REQUIRED)
+
+set(PROJECT_VERSION_MAJOR "0")
+set(PROJECT_VERSION_MINOR "5")
+set(PROJECT_VERSION_PATCH "0")
+set(PROJECT_VERSION_COUNT 1)
+set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+set(PROJECT_VENDOR "Junichi Tokuda")
+set(PROJECT_COPYRIGHT_YEAR "2010-2011")
+set(PROJECT_DOMAIN_FIRST "bwh.harvard")
+set(PROJECT_DOMAIN_SECOND "edu")
+set(PROJECT_DOMAIN "${PROJECT_DOMAIN_FIRST}.${PROJECT_DOMAIN_SECOND}")
+
+if(APPLE AND CMAKE_INSTALL_PREFIX MATCHES "/usr/local")
+	set(CMAKE_INSTALL_PREFIX "/Applications")
+endif()
+
+if(UNIX AND NOT APPLE)
+    string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
+    set(BIN_INSTALL_DIR "bin")
+    set(DOC_INSTALL_DIR "share/doc/${PROJECT_NAME_LOWERCASE}/")
+else()
+    set(BIN_INSTALL_DIR ".")
+    set(DOC_INSTALL_DIR ".")
+endif()
+set(ICONS_DIR "${${PROJECT_NAME}_SOURCE_DIR}/icons")
+if(CMAKE_COMPILER_IS_GNUCXX OR APPLE)
+    add_definitions(-Wall -Wextra)
+    if(CMAKE_BUILD_RELEASE)
+        add_definitions(-Werror)
+    endif()
+endif()
+
+set(OpenIGTLinkSimulator_SOURCES
+    main.cpp
+    OpenIGTLinkSimulatorApp.cpp
+    igtlTCPConnectorBase.cxx
+    igtlTCPConnectorServer.cxx
+    igtlTCPConnectorClient.cxx
+    igtlTCPConnectorServerOIGTL.cxx
+)
+
+set(OpenIGTLinkSimulator_HEADERS OpenIGTLinkSimulatorApp.h)
+set(OpenIGTLinkSimulator_FORMS OpenIGTLinkSimulatorWindow.ui)
+#set(OpenIGTLinkSimulator_RESOURCES images.qrc)
+
+qt4_wrap_cpp(OpenIGTLinkSimulator_HEADERS_MOC ${OpenIGTLinkSimulator_HEADERS})
+qt4_wrap_ui(OpenIGTLinkSimulator_FORMS_HEADERS ${OpenIGTLinkSimulator_FORMS})
+#qt4_add_resources(OpenIGTLinkSimulator_RESOURCES_RCC ${OpenIGTLinkSimulator_RESOURCES})
+
+
+if(APPLE)
+    set(MACOSX_BUNDLE_INFO_STRING "${PROJECT_NAME} ${PROJECT_VERSION}")
+    set(MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_NAME} ${PROJECT_VERSION}")
+    set(MACOSX_BUNDLE_LONG_VERSION_STRING "${PROJECT_NAME} ${PROJECT_VERSION}")
+    set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}")
+    set(MACOSX_BUNDLE_COPYRIGHT "${PROJECT_COPYRIGHT_YEAR} ${PROJECT_VENDOR}")
+    set(MACOSX_BUNDLE_ICON_FILE "OpenIGTLinkSimulator.icns")
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "${PROJECT_DOMAIN}")
+    set(MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}")
+    set(MACOSX_BUNDLE_RESOURCES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.app/Contents/Resources")
+    set(MACOSX_BUNDLE_ICON "${ICONS_DIR}/${MACOSX_BUNDLE_ICON_FILE}")
+    execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${MACOSX_BUNDLE_RESOURCES})
+    execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MACOSX_BUNDLE_ICON} ${MACOSX_BUNDLE_RESOURCES})
+endif()
+
+
+include(${QT_USE_FILE})
+include(${OpenIGTLink_USE_FILE})
+
+add_definitions(${QT_DEFINITIONS})
+
+add_executable(OpenIGTLinkSimulator WIN32 MACOSX_BUNDLE
+    ${OpenIGTLinkSimulator_SOURCES} 
+    ${OpenIGTLinkSimulator_HEADERS_MOC} 
+    ${OpenIGTLinkSimulator_FORMS_HEADERS} 
+    ${OpenIGTLinkSimulator_RESOURCES_RCC})
+
+target_link_libraries(OpenIGTLinkSimulator
+    ${QT_LIBRARIES}
+    OpenIGTLink
+)
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+
+#set(QT_USE_QTOPENGL TRUE)
+#set(QT_USE_QTNETWORK TRUE)
+#set(QT_USE_QTOPENGL TRUE)
+#set(QT_USE_QTSQL TRUE)
+#set(QT_USE_QTXML TRUE)
+#set(QT_USE_QTSVG TRUE)
+#set(QT_USE_QTTEST TRUE)
+#set(QT_USE_QTDBUS TRUE)
+#set(QT_USE_QTSCRIPT TRUE)
+#set(QT_USE_QTWEBKIT TRUE)
+#set(QT_USE_QTXMLPATTERNS TRUE)
+#set(QT_USE_PHONON TRUE)
+
+#INCLUDE(InstallRequiredSystemLibraries)
+
+install(TARGETS ${PROJECT_NAME} DESTINATION ${BIN_INSTALL_DIR})
+
+set(CPACK_GENERATOR "TBZ2")
+set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+set(CPACK_PACKAGE_VENDOR "${PROJECT_VENDOR}")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/${README_FILE}")
+if(WIN32)
+    set(CPACK_GENERATOR "NSIS")
+    set(CPACK_PACKAGE_EXECUTABLES "${PROJECT_NAME}" "${PROJECT_NAME}")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME}")
+    set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME} ${PROJECT_VERSION}")
+    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/${LICENSE_FILE}")
+    set(CPACK_NSIS_EXECUTABLES_DIRECTORY "${BIN_INSTALL_DIR}")
+    #set(CPACK_NSIS_MUI_ICON "${PROJECT_ICONS_DIRECTORY}/NSIS.ico")
+    #set(CPACK_PACKAGE_ICON "${PROJECT_ICONS_DIRECTORY}\\\\NSISHeader.bmp")
+    set(CPACK_NSIS_URL_INFO_ABOUT "http://${PROJECT_DOMAIN}")
+    set(CPACK_NSIS_INSTALLED_ICON_NAME "${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}")
+    set(CPACK_NSIS_MENU_LINKS "${LICENSE_FILE}" "LICENSE.txt" "${README_FILE}" "README.txt")
+    set(CPACK_NSIS_MUI_FINISHPAGE_RUN "${CPACK_NSIS_INSTALLED_ICON_NAME}")
+endif()
+if(APPLE)
+     set(CMAKE_INSTALL_PREFIX "/Applications")
+     set(CPACK_GENERATOR "DragNDrop")
+     set(CPACK_DMG_FORMAT "UDBZ")
+     set(CPACK_DMG_VOLUME_NAME "${PROJECT_NAME}")
+     set(CPACK_SYSTEM_NAME "OSX")
+     set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}")
+     set(CPACK_PACKAGE_ICON "${ICONS_DIR}/OpenIGTLinkSimulator.icns")
+     #set(CPACK_DMG_DS_STORE "${ICONS_DIR}/DMGDSStore")
+     #set(CPACK_DMG_BACKGROUND_IMAGE "${ICONS_DIR}/DMGBackground.png")
+endif()
+
+
+
+include(CPack)
+
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION "${BIN_INSTALL_DIR}")
+include(InstallRequiredSystemLibraries)
+
+if(APPLE)
+    set(EXECUTABLE "${PROJECT_NAME}.app")
+elseif(WIN32)
+    set(EXECUTABLE "${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}")
+else()
+    set(EXECUTABLE "${BIN_INSTALL_DIR}/${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX}")
+endif()
+
+if(APPLE OR WIN32)
+    include(DeployQt4)
+    install_qt4_executable("${EXECUTABLE}" qsqlite)
+endif()
+
+
+
+
+
