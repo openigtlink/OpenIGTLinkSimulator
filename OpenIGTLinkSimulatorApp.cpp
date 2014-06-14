@@ -23,6 +23,7 @@
 #include "igtlMultiThreader.h"
 #include "igtlOSUtil.h"
 #include "igtlTCPConnectorServerOIGTL.h"
+#include "qDataGeneratorTracking.h"
 
 const int OpenIGTLinkSimulatorApp::StatusColorTable[][3] = {
   {100, 100, 100},  // STOP
@@ -69,11 +70,16 @@ OpenIGTLinkSimulatorApp::OpenIGTLinkSimulatorApp(QWidget *parent)
   timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
   timer->start(200); 
+
+  // Data Generator
+  this->TrackingDataGenerator = new qDataGeneratorTracking();
   
   //// OpenIGTLink Server Socket
   oigtlConnector = igtl::TCPConnectorServerOIGTL::New();
   oigtlConnector->SetPort(18944);
   
+  this->TrackingDataGenerator->SetConnector(oigtlConnector);
+  this->TrackingDataGenerator->Start();
   this->Threader = igtl::MultiThreader::New();
   this->Threader->SpawnThread((igtl::ThreadFunctionType) &igtl::TCPConnectorServerOIGTL::MonitorThreadFunction,
                               oigtlConnector);

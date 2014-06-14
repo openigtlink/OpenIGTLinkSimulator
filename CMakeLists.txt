@@ -42,13 +42,15 @@ endif()
 set(OpenIGTLinkSimulator_SOURCES
     main.cpp
     OpenIGTLinkSimulatorApp.cpp
+    qDataGeneratorBase.cpp
+    qDataGeneratorTracking.cpp
     igtlTCPConnectorBase.cxx
     igtlTCPConnectorServer.cxx
     igtlTCPConnectorClient.cxx
     igtlTCPConnectorServerOIGTL.cxx
 )
 
-set(OpenIGTLinkSimulator_HEADERS OpenIGTLinkSimulatorApp.h)
+set(OpenIGTLinkSimulator_HEADERS OpenIGTLinkSimulatorApp.h qDataGeneratorBase.h qDataGeneratorTracking.h)
 set(OpenIGTLinkSimulator_FORMS OpenIGTLinkSimulatorWindow.ui)
 #set(OpenIGTLinkSimulator_RESOURCES images.qrc)
 

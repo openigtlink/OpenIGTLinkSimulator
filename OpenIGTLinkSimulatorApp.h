@@ -19,6 +19,7 @@
 #include "ui_OpenIGTLinkSimulatorWindow.h"
 #include "igtlMultiThreader.h"
 #include "igtlTCPConnectorServerOIGTL.h"
+#include "qDataGeneratorTracking.h"
 
 #define DEFAULT_OIGTL_PORT   18944
 #define DEFAULT_SPICE_PORT   2000
@@ -62,6 +63,8 @@ private:
   QTimer *timer;
   igtl::MultiThreader::Pointer Threader;
   igtl::TCPConnectorServerOIGTL::Pointer oigtlConnector;
+
+  qDataGeneratorTracking* TrackingDataGenerator;
 
   bool fScannerActive;
   bool fClientActive;
