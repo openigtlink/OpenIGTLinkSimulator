@@ -39,7 +39,7 @@ const int OpenIGTLinkSimulatorApp::DataIOColorTable[][3] = {
 };
 
  
-OpenIGTLinkSimulatorApp::OpenIGTLinkSimulatorApp(QWidget *parent)
+OpenIGTLinkSimulatorApp::OpenIGTLinkSimulatorApp(QWidget *NOTUSED(parent))
 {
   setupUi(this); // this sets up GUI
 
@@ -131,7 +131,6 @@ void OpenIGTLinkSimulatorApp::clientActivateClicked()
 {
   if (fClientActive)
     {
-    pbClientActivate->setText("Activate");
     fClientActive = false;
     if (oigtlConnector.IsNotNull())
       {
@@ -140,7 +139,6 @@ void OpenIGTLinkSimulatorApp::clientActivateClicked()
     }
   else
     {
-    pbClientActivate->setText("Deactivate");
     fClientActive = true;
     if (oigtlConnector.IsNotNull())
       {
@@ -208,6 +206,14 @@ void OpenIGTLinkSimulatorApp::updateStatus()
     changeStatusTextColor(leStatusClient, oigtlConnector->GetStatus());
     leOpenIGTLinkPort->setEnabled(oigtlConnector->GetStatus() == igtl::TCPConnectorBase::STATUS_STOP);
     editClientFlag &= oigtlConnector->GetStatus() == igtl::TCPConnectorBase::STATUS_STOP;
+    if (oigtlConnector->GetStatus() == igtl::TCPConnectorBase::STATUS_STOP)
+      {
+      pbClientActivate->setText("Activate");
+      }
+    else
+      {
+      pbClientActivate->setText("Deactivate");
+      }
     }
   //bool editScannerFlag = true;
   //leScannerAddress->setEnabled(editScannerFlag);
@@ -223,7 +229,6 @@ void OpenIGTLinkSimulatorApp::quit()
     oigtlConnector->CloseThread();
     }
 
-  std::cerr << "CLOSING..." << std::endl;
   timer->stop(); 
   close();
 }

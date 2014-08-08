@@ -45,7 +45,6 @@ int TCPConnectorServer::Initialize()
 {
   if (this->ServerSocket->CreateServer(this->Port))
     {
-    //std::cerr << "TCPConnectorServer::Initialize() : Cannot create a server socket." << std::endl;
     return 0;
     }
   return 1;
@@ -55,11 +54,9 @@ int TCPConnectorServer::Initialize()
 //-----------------------------------------------------------------------------
 int TCPConnectorServer::WaitForConnection()
 {
-  std::cerr << this->GetClassName() << ": WaitForConnection(): Port number # = " << this->Port << std::endl;
   this->Socket = NULL;
   if (this->ServerSocket.IsNotNull())
     {
-    //this->ServerSocket->CreateServer(this->Port);
     this->Socket = this->ServerSocket->WaitForConnection(1000);
     }
 

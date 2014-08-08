@@ -63,15 +63,17 @@ void TCPConnectorBase::MonitorThreadFunction(void * ptr)
   TCPConnectorBase * con = static_cast<TCPConnectorBase *>(info->UserData);
 
   con->Active = 0;
+  if (!con->Initialize())
+    {
+    std::cerr << "TCPConnectorBase::MonitorThreadFunction(): Failed to initialize a server socket." << std::endl;
+    return;
+    }
+
   while (con->Active >= 0)
     {
     if (con->ConfigurationUpdated)
       {
       con->ConfigurationUpdated = false;
-      if (!con->Initialize())
-        {
-        return;
-        }
       }
     con->Status = STATUS_STOP;
     while (con->Active)

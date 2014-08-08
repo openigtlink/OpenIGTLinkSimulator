@@ -46,6 +46,8 @@
 namespace igtl
 {
 
+#define NOTUSED(x)
+
 class IGTLCommon_EXPORT TCPConnectorBase : public Object
 {
 public:
@@ -77,7 +79,7 @@ public:
   void           SetPort(int p) { this->Port = p; this->ConfigurationUpdated = true; };
   int            GetPort() { return this->Port; };
 
-  virtual int    PushMessage(igtl::MessageBase * message) { return 0; };
+  virtual int    PushMessage(igtl::MessageBase * NOTUSED(message)) { return 0; };
   int            SetOutputConnector(igtl::TCPConnectorBase * con)
   {
     this->OutputConnector = con;

@@ -52,7 +52,7 @@ protected slots:
 
 protected:
 
-virtual void GenerateData(igtl::MessageBase::Pointer& data) {};
+virtual void GenerateData(igtl::MessageBase::Pointer& NOTUSED(data)) {};
 
 protected:
 
