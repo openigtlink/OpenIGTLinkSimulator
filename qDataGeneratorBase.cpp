@@ -29,10 +29,11 @@ qDataGeneratorBase::~qDataGeneratorBase()
 
 
 //-----------------------------------------------------------------------------
-void qDataGeneratorBase::SetConnector(igtl::TCPConnectorBase * connector)
+void qDataGeneratorBase::SetConnector(igtl::TCPConnectorServerOIGTL * connector)
 {
 
   this->Connector = connector;
+  this->RegisterHandlers(connector);
 
 }
 

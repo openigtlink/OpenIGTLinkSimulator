@@ -40,6 +40,8 @@ public:
 
   virtual const char * GetClassName() { return "Server"; };
 
+  igtl::Socket::Pointer& GetSocket() { return this->Socket; };
+  
 protected:
   TCPConnectorServer();
   ~TCPConnectorServer();
@@ -51,6 +53,7 @@ protected:
   virtual int ReceiveMessage() { return 0; };
   virtual int CloseConnection();
   virtual int Finalize();
+
   
 protected:
   igtl::ServerSocket::Pointer ServerSocket;

@@ -25,13 +25,16 @@ public:
 
   qDataGeneratorTracking();
   virtual ~qDataGeneratorTracking();
-  
+
   virtual const char * GetClassName() { return "qDataGeneratorTracking"; };
 
 
 protected:
 
+  virtual void RegisterHandlers(igtl::TCPConnectorServerOIGTL * connector);  
   virtual void GenerateData(igtl::MessageBase::Pointer& data);
+
+  virtual int  HandleReceivedMessage(igtl::Socket *socket, igtl::MessageHeader * header);
 
   // Function to generate random matrix.
   void    GetRandomTestMatrix(igtl::Matrix4x4& matrix, float phi, float theta);
@@ -46,6 +49,8 @@ protected:
   std::vector< float > Theta;
 
   int NumberOfChannels;
+
+  int fTracking;
 
 };
 

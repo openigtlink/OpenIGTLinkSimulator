@@ -19,6 +19,7 @@
 #include "igtlTCPConnectorServerOIGTL.h"
 #include "igtlOSUtil.h"
 #include "igtlTransformMessage.h"
+#include "qDataGeneratorBase.h"
 
 namespace igtl
 {
@@ -87,8 +88,8 @@ int TCPConnectorServerOIGTL::Initialize()
 //-----------------------------------------------------------------------------
 int TCPConnectorServerOIGTL::ReceiveMessage()
 {
-
-  //std::cerr << "TCPConnectorServerOIGTL::ReceiveMessage() : Waiting for messages." << std::endl;
+  
+  // std::cerr << "TCPConnectorServerOIGTL::ReceiveMessage() : Waiting for messages." << std::endl;
 
   // Initialize receive buffer
   //this->HeaderMsg->InitPack();
@@ -122,43 +123,44 @@ int TCPConnectorServerOIGTL::ReceiveMessage()
   header->Unpack();
 
   // Check data type and receive data body
-  if (strcmp(header->GetDeviceType(), "TRANSFORM") == 0)
+  MessageHandlerTypeMapType::iterator iter;
+  iter = this->MessageHandlerTypeMap.find(header->GetDeviceType());
+
+  qDataGeneratorBase* handler = NULL;
+
+  if (iter != this->MessageHandlerTypeMap.end())
     {
-    return ReceiveTransform(header);
+    MessageHandlerNameMapType& nameMap = iter->second;
+    MessageHandlerNameMapType::iterator niter;
+    std::string key = std::string("+") + header->GetDeviceName();
+    niter = nameMap.find(key);
+    if (niter != nameMap.end())
+      {
+      handler = niter->second;
+      }
+    else // No handler for this specific message name
+      {
+      niter = nameMap.find("*");
+      if (niter != nameMap.end()) // There is a wild card handler
+        {
+        handler = niter->second;
+        }
+      }
     }
-  //else if (strcmp(header->GetDeviceType(), "POSITION") == 0)
-  //  {
-  //  ReceivePosition(socket, header);
-  //  }
-  //else if (strcmp(header->GetDeviceType(), "IMAGE") == 0)
-  //  {
-  //  ReceiveImage(socket, header);
-  //  }
-  //else if (strcmp(header->GetDeviceType(), "STATUS") == 0)
-  //  {
-  //  ReceiveStatus(socket, header);
-  //  }
-  //else if (strcmp(header->GetDeviceType(), "POINT") == 0)
-  //  {
-  //  ReceivePoint(socket, header);
-  //  }
-  //else if (strcmp(header->GetDeviceType(), "STRING") == 0)
-  //  {
-  //  ReceiveString(socket, header);
-  //  }
-  //else if (strcmp(header->GetDeviceType(), "BIND") == 0)
-  //  {
-  //  ReceiveBind(socket, header);
-  //  }
-  else
+
+  if (handler)
     {
-    // if the data type is unknown, skip reading.
-    //std::cerr << "Receiving : " << header->GetDeviceType() << std::endl;
+    handler->HandleReceivedMessage(this->Socket, header);
+    }
+
+  else // No handler is available for this type of message.
+    {
     if (this->Socket.IsNotNull() && this->Socket->GetConnected())
       {
       this->Socket->Skip(header->GetBodySizeToRead(), 0);
       }
     }
+
           
   return 1;
 
@@ -173,6 +175,68 @@ int TCPConnectorServerOIGTL::Finalize()
     return 1;
     }
   return 0;
+}
+
+
+//-----------------------------------------------------------------------------
+void TCPConnectorServerOIGTL::RegisterMessageHandler(const char* type, qDataGeneratorBase* handler)
+{
+  
+  MessageHandlerTypeMapType::iterator iter;
+  
+  iter = this->MessageHandlerTypeMap.find(type);
+
+  if (iter == this->MessageHandlerTypeMap.end()) // the type has not been registered yet.
+    {
+    MessageHandlerNameMapType nameMap;
+    nameMap["*"] = handler;
+    this->MessageHandlerTypeMap[type] = nameMap;
+    }
+  else
+    {
+    MessageHandlerNameMapType& nameMap = iter->second;
+    nameMap.clear();
+    nameMap["*"] = handler;
+    }
+
+}
+
+
+//-----------------------------------------------------------------------------
+void TCPConnectorServerOIGTL::RegisterMessageHandler(const char* type, const char* name, qDataGeneratorBase* handler)
+{
+  
+  MessageHandlerTypeMapType::iterator iter;
+  
+  iter = this->MessageHandlerTypeMap.find(type);
+
+  std::string nkey = std::string("+") + name;
+  if (iter == this->MessageHandlerTypeMap.end()) // the type has not been registered yet.
+    {
+    MessageHandlerNameMapType nameMap;
+    nameMap[nkey] = handler;
+    this->MessageHandlerTypeMap[type] = nameMap;
+    }
+  else
+    {
+    MessageHandlerNameMapType& nameMap = iter->second;
+    nameMap[nkey] = handler;
+    }
+}
+
+
+//-----------------------------------------------------------------------------
+void TCPConnectorServerOIGTL::UnRegisterMessageHandler(const char* type)
+{
+
+  MessageHandlerTypeMapType::iterator iter;
+  
+  iter = this->MessageHandlerTypeMap.find(type);
+  
+  if (iter != this->MessageHandlerTypeMap.end()) // the type is found in the map
+    {
+    this->MessageHandlerTypeMap.erase(iter);
+    }
 }
 
 

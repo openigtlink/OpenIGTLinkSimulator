@@ -19,6 +19,8 @@
 #include "igtlImageMessage.h"
 #include "igtlMutexLock.h"
 
+#include <map>
+
 //----------------------------------------------------------------------
 // Description
 //
@@ -42,6 +44,8 @@
 //
 //   scannerConnector->OutputConnector(scannerConnector);
 //
+
+class qDataGeneratorBase;
 
 namespace igtl
 {
@@ -80,6 +84,7 @@ public:
   int            GetPort() { return this->Port; };
 
   virtual int    PushMessage(igtl::MessageBase * NOTUSED(message)) { return 0; };
+
   int            SetOutputConnector(igtl::TCPConnectorBase * con)
   {
     this->OutputConnector = con;
@@ -99,6 +104,7 @@ public:
   // sent messages through the connector. Those flags are turned ON when the connector
   // receives/sents messages, and turned OFF when they are checked by using CheckDataReceived()/
   // CheckDataSent() functions. Those flags are used for data receive/sent indicators in a GUI.
+
   inline void SetDataReceivedFlag() { this->DataReceivedFlag = true; }
   inline void SetDataSentFlag()     { this->DataSentFlag = true; }
   inline bool CheckDataReceived()

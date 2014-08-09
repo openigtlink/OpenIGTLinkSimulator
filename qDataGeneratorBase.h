@@ -20,7 +20,7 @@
 #include "igtlWin32Header.h"
 #include "igtlSmartPointer.h"
 #include "igtlMessageBase.h"
-#include "igtlTCPConnectorBase.h"
+#include "igtlTCPConnectorServerOIGTL.h"
 
 //----------------------------------------------------------------------
 // Description
@@ -39,9 +39,11 @@ public:
   
   virtual const char * GetClassName() { return "qDataGeneratorBase"; };
 
-  void    SetInterval(int ms);
+  void    SetInterval(int ms) { this->TimerInterval = ms; };
   int     GetInterval() { return this->TimerInterval; }
-  void    SetConnector(igtl::TCPConnectorBase * connector);
+  void    SetConnector(igtl::TCPConnectorServerOIGTL * connector);
+
+  virtual int  HandleReceivedMessage(igtl::Socket *socket, igtl::MessageHeader * header) {};
 
   void    Start();
   void    Stop();
@@ -51,14 +53,14 @@ protected slots:
   void    ProcessTimer();
 
 protected:
-
+virtual void RegisterHandlers(igtl::TCPConnectorServerOIGTL * NOTUSED(connector)) {};
 virtual void GenerateData(igtl::MessageBase::Pointer& NOTUSED(data)) {};
 
 protected:
 
   QTimer* Timer;
   int    TimerInterval;
-  igtl::TCPConnectorBase::Pointer Connector;
+  igtl::TCPConnectorServerOIGTL::Pointer Connector;
 
 };
 
