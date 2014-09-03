@@ -14,6 +14,8 @@
 #ifndef __qDataReadingTracking_H
 #define __qDataReadingTracking_H
 
+#include <string>
+
 #include "qDataGeneratorBase.h"
 #include "igtlTrackingDataMessage.h"
 
@@ -28,10 +30,13 @@ public:
     
     virtual const char * GetClassName() { return "qDataReadingTracking"; };
     
+    void    SetFileName(std::string name) { this->FileName = name; };
     
 protected:
     
     virtual void RegisterHandlers(igtl::TCPConnectorServerOIGTL * connector);
+    virtual void GenerateData(igtl::MessageBase::Pointer& data);
+
     virtual void ReadData(igtl::MessageBase::Pointer& data, std::string);
     
     virtual int  HandleReceivedMessage(igtl::Socket *socket, igtl::MessageHeader * header);
@@ -51,6 +56,8 @@ protected:
     int NumberOfChannels;
     
     int fTracking;
+
+    std::string FileName;
     
 };
 
