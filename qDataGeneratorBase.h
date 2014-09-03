@@ -50,11 +50,13 @@ public:
 
 protected slots:
 
-  void    ProcessTimer();
+    void    ProcessTimer(std::string);
+    void    ProcessTimer();
 
 protected:
 virtual void RegisterHandlers(igtl::TCPConnectorServerOIGTL * NOTUSED(connector)) {};
 virtual void GenerateData(igtl::MessageBase::Pointer& NOTUSED(data)) {};
+    virtual void ReadData(igtl::MessageBase::Pointer& NOTUSED(data), std::string) {};
 
 protected:
 

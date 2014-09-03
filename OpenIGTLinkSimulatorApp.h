@@ -20,6 +20,7 @@
 #include "igtlMultiThreader.h"
 #include "igtlTCPConnectorServerOIGTL.h"
 #include "qDataGeneratorTracking.h"
+#include "qDataReadingTracker.h"
 
 #define DEFAULT_OIGTL_PORT   18944
 #define DEFAULT_SPICE_PORT   2000
@@ -43,7 +44,10 @@ public:
 public slots:
   void getPath();
   void about();
-
+    void enable();
+    void disable();
+    void generate(std::string);
+    
   void scannerActivateClicked();
   void clientActivateClicked();
 
@@ -65,6 +69,7 @@ private:
   igtl::TCPConnectorServerOIGTL::Pointer oigtlConnector;
 
   qDataGeneratorTracking* TrackingDataGenerator;
+    qDataReadingTracker* TrackingDataReader;
 
   bool fScannerActive;
   bool fClientActive;

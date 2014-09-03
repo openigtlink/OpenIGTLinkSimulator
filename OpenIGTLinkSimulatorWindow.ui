@@ -154,6 +154,9 @@
              <property name="text">
               <string>Ramdom</string>
              </property>
+             <attribute name="buttonGroup">
+              <string notr="true">rbgDataSource</string>
+             </attribute>
             </widget>
            </item>
            <item>
@@ -161,6 +164,9 @@
              <property name="text">
               <string>From File</string>
              </property>
+             <attribute name="buttonGroup">
+              <string notr="true">rbgDataSource</string>
+             </attribute>
             </widget>
            </item>
           </layout>
@@ -278,4 +284,7 @@
  </widget>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="rbgDataSource"/>
+ </buttongroups>
 </ui>

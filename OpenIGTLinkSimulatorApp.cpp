@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <QtGui> 
+#include <QFile>
 
 #include "OpenIGTLinkSimulatorApp.h"
  
@@ -24,6 +25,7 @@
 #include "igtlOSUtil.h"
 #include "igtlTCPConnectorServerOIGTL.h"
 #include "qDataGeneratorTracking.h"
+#include "qDataReadingTracker.h"
 
 const int OpenIGTLinkSimulatorApp::StatusColorTable[][3] = {
   {100, 100, 100},  // STOP
@@ -47,8 +49,13 @@ OpenIGTLinkSimulatorApp::OpenIGTLinkSimulatorApp(QWidget *NOTUSED(parent))
   fClientActive  = false;
 
   // Signals and Slots
+    connect(pbFilename, SIGNAL( clicked() ), this, SLOT( getPath() ));
+    connect(rbTrackingRandom, SIGNAL( clicked() ), this, SLOT( disable() ));
+    connect(rbTrackingFile, SIGNAL( clicked() ), this, SLOT( enable() ));
   connect(pbQuit, SIGNAL( clicked() ), this, SLOT( quit() ));
   connect(pbAbout, SIGNAL( clicked() ), this, SLOT( about() ));
+          /*corrupt*/  //   connect(rbTrackingRandom, SIGNAL( clicked() ), this, SLOT( generate() ));
+//    connect(leFilename, SIGNAL( textChanged()), this, SLOT( generate());
   //connect(pbScannerActivate, SIGNAL( clicked() ), this, SLOT( scannerActivateClicked() ));
   connect(pbClientActivate, SIGNAL( clicked() ), this, SLOT( clientActivateClicked() ));
 
@@ -60,7 +67,7 @@ OpenIGTLinkSimulatorApp::OpenIGTLinkSimulatorApp(QWidget *NOTUSED(parent))
   //        this, SLOT( imagePortChanged( const QString & ) ));
   connect(leOpenIGTLinkPort, SIGNAL( textChanged( const QString & ) ),
           this, SLOT( igtlPortChanged( const QString &  ) ));
-
+    
   // Default values
   QString qs;
   //leScannerAddress->setText(DEFAULT_RMP_ADDR);
@@ -71,33 +78,87 @@ OpenIGTLinkSimulatorApp::OpenIGTLinkSimulatorApp(QWidget *NOTUSED(parent))
   connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
   timer->start(200); 
 
-  // Data Generator
-  this->TrackingDataGenerator = new qDataGeneratorTracking();
-  
-  //// OpenIGTLink Server Socket
-  oigtlConnector = igtl::TCPConnectorServerOIGTL::New();
-  oigtlConnector->SetPort(18944);
-  
-  this->TrackingDataGenerator->SetConnector(oigtlConnector);
-  this->TrackingDataGenerator->Start();
-  this->Threader = igtl::MultiThreader::New();
-  this->Threader->SpawnThread((igtl::ThreadFunctionType) &igtl::TCPConnectorServerOIGTL::MonitorThreadFunction,
-                              oigtlConnector);
-
+    //Data Generator for Random
+     this->TrackingDataGenerator = new qDataGeneratorTracking();
+    
+    //// OpenIGTLink Server Socket
+    oigtlConnector = igtl::TCPConnectorServerOIGTL::New();
+    oigtlConnector->SetPort(18944);
+    
+    this->TrackingDataGenerator->SetConnector(oigtlConnector);
+    this->TrackingDataGenerator->Start();
+    this->Threader = igtl::MultiThreader::New();
+    this->Threader->SpawnThread((igtl::ThreadFunctionType) &igtl::TCPConnectorServerOIGTL::MonitorThreadFunction, oigtlConnector);
+  //  }
 }
+
+  // Data Generator for File
+void OpenIGTLinkSimulatorApp::generate(std::string path){
+   // this->TrackingDataGenerator->Stop();
+    
+            // Default values
+//            QString qs;
+            //leScannerAddress->setText(DEFAULT_RMP_ADDR);
+//            leOpenIGTLinkPort->setText(qs.setNum(DEFAULT_OIGTL_PORT));
+            
+            // Time for GUI update (every 200 ms)
+//            timer = new QTimer(this);
+//            connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
+//            timer->start(200);
+            
+            //Generating
+            if(path != " "){
+            this->TrackingDataReader = new qDataReadingTracker();
+            }
+            // OpenIGTLink Server Socket
+            oigtlConnector = igtl::TCPConnectorServerOIGTL::New();
+            oigtlConnector->SetPort(18944);
  
- 
+            this->TrackingDataReader->SetConnector(oigtlConnector);
+            this->TrackingDataReader->Start();
+            this->Threader = igtl::MultiThreader::New();
+            this->Threader-> SpawnThread((igtl::ThreadFunctionType) &igtl::TCPConnectorServerOIGTL::MonitorThreadFunction, oigtlConnector);
+
+ }
+
+
+
+
+void OpenIGTLinkSimulatorApp::disable( )
+{
+ //   if(a == 1)
+        pbFilename->setEnabled(false);
+}
+void OpenIGTLinkSimulatorApp::enable( )
+{
+   // if(a == 1)
+        pbFilename->setEnabled(true);
+}
+
 void OpenIGTLinkSimulatorApp::getPath()
 {
-    QString path;
-    
+    QString path = QFileDialog::getOpenFileName(this,
+                                                tr("Open File"), "/Users",
+                                                tr("CSV Files (*.csv);;Text Files (*.txt)"));
+    if(path != " "){
+        QFile file(path);
+        if(!file.open(QIODevice::ReadOnly)) {
+            QMessageBox::critical(this, tr("Error"), tr("Could not open file"));
+            return;
+        }
+        QTextStream in(&file);
+        leFilename->setText( path );
+        file.close();
+    }
+    std::string pathString = path.toUtf8().constData();
+    OpenIGTLinkSimulatorApp::generate(pathString);
     //path = QFileDialog::getOpenFileName(
     //    this,
     //    "Choose a file to open",
     //    QString::null,
     //    QString::null);
     //
-    //lineEdit->setText( path );
+   // lineEdit->setText( path );
 }
  
  
@@ -129,27 +190,41 @@ void OpenIGTLinkSimulatorApp::scannerActivateClicked()
 
 void OpenIGTLinkSimulatorApp::clientActivateClicked()
 {
-  if (fClientActive)
+    
+    if (fClientActive)                      //if Activated and data selected
     {
-    fClientActive = false;
-    if (oigtlConnector.IsNotNull())
-      {
-      oigtlConnector->Deactivate();
-      }
+        fClientActive = false;
+        if (oigtlConnector.IsNotNull())
+        {
+            oigtlConnector->Deactivate();
+        }
+        rbTrackingFile->setEnabled(true);
+        rbTrackingRandom->setEnabled(true);
+        if (rbTrackingFile->isChecked()) pbFilename->setEnabled(true);
     }
-  else
+    
+    
+    //else if(!fClientActive && !rbTrackingFile->isChecked() && !rbTrackingRandom->isChecked())
+        //QMessageBox::critical(this, tr("Error"), tr("Data source not selected!"));
+    else if(rbTrackingFile->isChecked() && leFilename->text()=="")
+        QMessageBox::critical(this, tr("Error"), tr("File not selected!"));
+    
+    else                                        //if Deactivated and data selected.
     {
-    fClientActive = true;
-    if (oigtlConnector.IsNotNull())
-      {
-      std::cerr << "Activating OpenIGTLink connector with:" << std::endl;
-      std::cerr << "    Port: " << igtlPort.toInt() << std::endl;
-      oigtlConnector->SetPort(igtlPort.toInt());
-      oigtlConnector->Activate();
-      }
+        fClientActive = true;
+        if (oigtlConnector.IsNotNull())
+        {
+            std::cerr << "Activating OpenIGTLink connector with:" << std::endl;
+            std::cerr << "    Port: " << igtlPort.toInt() << std::endl;
+            oigtlConnector->SetPort(igtlPort.toInt());
+            oigtlConnector->Activate();
+        }
+        rbTrackingFile->setEnabled(false);
+        rbTrackingRandom->setEnabled(false);
+        pbFilename->setEnabled(false);
     }
+    
 }
-
 
 void OpenIGTLinkSimulatorApp::scannerAddressChanged( const QString & text )
 {
@@ -215,6 +290,7 @@ void OpenIGTLinkSimulatorApp::updateStatus()
       pbClientActivate->setText("Deactivate");
       }
     }
+  else{ pbAbout->setEnabled(false);}
   //bool editScannerFlag = true;
   //leScannerAddress->setEnabled(editScannerFlag);
   //leControlPort->setEnabled(editScannerFlag);
