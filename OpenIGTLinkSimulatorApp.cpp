@@ -77,51 +77,47 @@ OpenIGTLinkSimulatorApp::OpenIGTLinkSimulatorApp(QWidget *NOTUSED(parent))
   timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
   timer->start(200); 
+  
+  //Data Generator for Random
+  this->TrackingDataGenerator = new qDataGeneratorTracking();
+  this->TrackingDataReader = new qDataReadingTracker();
 
-    //Data Generator for Random
-     this->TrackingDataGenerator = new qDataGeneratorTracking();
+  //// OpenIGTLink Server Socket
+  oigtlConnector = igtl::TCPConnectorServerOIGTL::New();
+  oigtlConnector->SetPort(18944);
     
-    //// OpenIGTLink Server Socket
-    oigtlConnector = igtl::TCPConnectorServerOIGTL::New();
-    oigtlConnector->SetPort(18944);
-    
-    this->TrackingDataGenerator->SetConnector(oigtlConnector);
-    this->TrackingDataGenerator->Start();
-    this->Threader = igtl::MultiThreader::New();
-    this->Threader->SpawnThread((igtl::ThreadFunctionType) &igtl::TCPConnectorServerOIGTL::MonitorThreadFunction, oigtlConnector);
+  //this->TrackingDataGenerator->SetConnector(oigtlConnector);
+  //this->TrackingDataGenerator->Start();
+
+  this->Threader = igtl::MultiThreader::New();
+  this->Threader->SpawnThread((igtl::ThreadFunctionType) &igtl::TCPConnectorServerOIGTL::MonitorThreadFunction, oigtlConnector);
   //  }
 }
 
   // Data Generator for File
-void OpenIGTLinkSimulatorApp::generate(std::string path){
-   // this->TrackingDataGenerator->Stop();
-    
-            // Default values
-//            QString qs;
-            //leScannerAddress->setText(DEFAULT_RMP_ADDR);
-//            leOpenIGTLinkPort->setText(qs.setNum(DEFAULT_OIGTL_PORT));
-            
-            // Time for GUI update (every 200 ms)
-//            timer = new QTimer(this);
-//            connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
-//            timer->start(200);
-            
-            //Generating
-            if(path != " "){
-            this->TrackingDataReader = new qDataReadingTracker();
-            }
-            // OpenIGTLink Server Socket
-            oigtlConnector = igtl::TCPConnectorServerOIGTL::New();
-            oigtlConnector->SetPort(18944);
- 
-            this->TrackingDataReader->SetConnector(oigtlConnector);
-            this->TrackingDataReader->Start();
-            this->Threader = igtl::MultiThreader::New();
-            this->Threader-> SpawnThread((igtl::ThreadFunctionType) &igtl::TCPConnectorServerOIGTL::MonitorThreadFunction, oigtlConnector);
-
- }
-
-
+//void OpenIGTLinkSimulatorApp::generate(std::string path){
+//   // this->TrackingDataGenerator->Stop();
+//    
+//            // Default values
+////            QString qs;
+//            //leScannerAddress->setText(DEFAULT_RMP_ADDR);
+////            leOpenIGTLinkPort->setText(qs.setNum(DEFAULT_OIGTL_PORT));
+//            
+//            // Time for GUI update (every 200 ms)
+////            timer = new QTimer(this);
+////            connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
+////            timer->start(200);
+//            
+//            // OpenIGTLink Server Socket
+//            //oigtlConnector = igtl::TCPConnectorServerOIGTL::New();
+//            oigtlConnector->SetPort(18944);
+// 
+//            this->TrackingDataReader->SetConnector(oigtlConnector);
+//            this->TrackingDataReader->Start();
+//            this->Threader = igtl::MultiThreader::New();
+//            this->Threader-> SpawnThread((igtl::ThreadFunctionType) &igtl::TCPConnectorServerOIGTL::MonitorThreadFunction, oigtlConnector);
+//
+// }
 
 
 void OpenIGTLinkSimulatorApp::disable( )
@@ -150,8 +146,8 @@ void OpenIGTLinkSimulatorApp::getPath()
         leFilename->setText( path );
         file.close();
     }
-    std::string pathString = path.toUtf8().constData();
-    OpenIGTLinkSimulatorApp::generate(pathString);
+    this->PathString = path.toUtf8().constData();
+    //OpenIGTLinkSimulatorApp::generate(pathString);
     //path = QFileDialog::getOpenFileName(
     //    this,
     //    "Choose a file to open",
@@ -212,6 +208,7 @@ void OpenIGTLinkSimulatorApp::clientActivateClicked()
     else                                        //if Deactivated and data selected.
     {
         fClientActive = true;
+
         if (oigtlConnector.IsNotNull())
         {
             std::cerr << "Activating OpenIGTLink connector with:" << std::endl;
@@ -219,9 +216,23 @@ void OpenIGTLinkSimulatorApp::clientActivateClicked()
             oigtlConnector->SetPort(igtlPort.toInt());
             oigtlConnector->Activate();
         }
+
         rbTrackingFile->setEnabled(false);
         rbTrackingRandom->setEnabled(false);
         pbFilename->setEnabled(false);
+
+        if (rbTrackingFile->isChecked())
+          {
+            this->TrackingDataReader->SetConnector(oigtlConnector);
+            this->TrackingDataReader->SetFileName(this->PathString);
+            this->TrackingDataReader->Start();
+          }
+        else
+          {
+            this->TrackingDataGenerator->SetConnector(oigtlConnector);
+            this->TrackingDataGenerator->Start();
+          }
+
     }
     
 }

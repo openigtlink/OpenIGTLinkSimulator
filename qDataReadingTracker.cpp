@@ -73,6 +73,12 @@ void qDataReadingTracker::RegisterHandlers(igtl::TCPConnectorServerOIGTL * conne
 
 
 //----------------------------------------------------------------------------
+void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
+{
+  std::cerr << "void GenerateData(igtl::MessageBase::Pointer& data) is called" << std::endl;
+}
+
+//----------------------------------------------------------------------------
 void qDataReadingTracker::ReadData(igtl::MessageBase::Pointer& data, std::string filename)
 {
     

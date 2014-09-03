@@ -44,10 +44,10 @@ public:
 public slots:
   void getPath();
   void about();
-    void enable();
-    void disable();
-    void generate(std::string);
-    
+  void enable();
+  void disable();
+  //void generate(std::string);
+  
   void scannerActivateClicked();
   void clientActivateClicked();
 
@@ -69,8 +69,8 @@ private:
   igtl::TCPConnectorServerOIGTL::Pointer oigtlConnector;
 
   qDataGeneratorTracking* TrackingDataGenerator;
-    qDataReadingTracker* TrackingDataReader;
-
+  qDataReadingTracker* TrackingDataReader;
+    
   bool fScannerActive;
   bool fClientActive;
 
@@ -78,6 +78,8 @@ private:
   QString imagePort;
   QString controlPort;
   QString igtlPort;
+
+  std::string PathString;
 
 
 };
