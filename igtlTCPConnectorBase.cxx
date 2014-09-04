@@ -70,6 +70,7 @@ void TCPConnectorBase::MonitorThreadFunction(void * ptr)
      //   }
     std::cerr << "TCPConnectorBase::MonitorThreadFunction(): Failed to initialize a server socket." << std::endl;
     return;
+    // con->Initialize();
     }
 
   while (con->Active >= 0)

@@ -50,6 +50,7 @@ int TCPConnectorServerOIGTL::PushMessage(igtl::MessageBase * message)
     {
     if (this->Socket.IsNull())
       {
+	std::cerr << "Socket is null (PushMessage)." << std::endl;
       // Do nothing.
       return 1;
       }

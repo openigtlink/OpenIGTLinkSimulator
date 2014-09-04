@@ -40,7 +40,7 @@ qDataGeneratorTracking::qDataGeneratorTracking(): qDataGeneratorBase()
 
   this->fTracking = 0;
 
-  for (int i = 0; i < this->NumberOfChannels; i ++)
+  for (int i = 0; i <this->NumberOfChannels; i ++)
     {
     std::stringstream ss;
     ss << "Channel " << i;
@@ -191,10 +191,28 @@ void qDataGeneratorTracking::GetRandomTestMatrix(igtl::Matrix4x4& matrix, float 
   
   igtl::PrintMatrix(matrix);
 }
-
-
-
-
-
-
-
+//-----------------------------------------------------------------------------
+/*
+void qDataGeneratorTracking::ChannelChanged(int i)
+{
+   this->NumberOfChannels = i;
+    
+    this->TrackingElement.resize(this->NumberOfChannels);
+    this->Phi.resize(this->NumberOfChannels);
+    this->Theta.resize(this->NumberOfChannels);
+    
+    this->fTracking = 0;
+    
+    for (int i = 0; i < this->NumberOfChannels; i ++)
+    {
+        std::stringstream ss;
+        ss << "Channel " << i;
+        this->TrackingElement[i] = igtl::TrackingDataElement::New();
+        this->TrackingElement[i]->SetName(ss.str().c_str());
+        this->TrackingElement[i]->SetType(igtl::TrackingDataElement::TYPE_TRACKER);
+        this->TrackingMsg->AddTrackingDataElement(this->TrackingElement[i]);
+        this->Phi[i] = 0.0;
+        this->Theta[i] = 0.0;
+    }
+}
+*/

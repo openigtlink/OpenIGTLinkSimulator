@@ -27,12 +27,12 @@ public:
   virtual ~qDataGeneratorTracking();
 
   virtual const char * GetClassName() { return "qDataGeneratorTracking"; };
-
+  //virtual void ChannelChanged(int i);
 
 protected:
 
   virtual void RegisterHandlers(igtl::TCPConnectorServerOIGTL * connector);  
-  virtual void GenerateData(igtl::MessageBase::Pointer& data);
+   virtual void GenerateData(igtl::MessageBase::Pointer& data);
 
   virtual int  HandleReceivedMessage(igtl::Socket *socket, igtl::MessageHeader * header);
 

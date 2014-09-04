@@ -42,7 +42,7 @@ public:
   void    SetInterval(int ms) { this->TimerInterval = ms; };
   int     GetInterval() { return this->TimerInterval; }
   void    SetConnector(igtl::TCPConnectorServerOIGTL * connector);
-
+  std::string PathString;
   virtual int  HandleReceivedMessage(igtl::Socket *socket, igtl::MessageHeader * header) {};
 
   void    Start();
@@ -50,7 +50,7 @@ public:
 
 protected slots:
 
-    void    ProcessTimer(std::string filename);
+  // void    ProcessTimer(std::string filename);
     void    ProcessTimer();
 
 protected:
