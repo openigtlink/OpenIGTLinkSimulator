@@ -74,10 +74,8 @@ void qDataReadingTracker::RegisterHandlers(igtl::TCPConnectorServerOIGTL * conne
 void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
 {
   if(FileName!="") {
-    // (*c)++;
     this->count++;
     float temp;
-    float tempMatrix[4][4];
     float matrix[4][4];
     // igtl::Matrix4x4 matrix;
     const char * ccpFileName = FileName.c_str();
@@ -104,13 +102,14 @@ void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
 	}
 	  */
 	  int counter=0;
-	  while(counter!=count){
+	  while(1){
 	    for(int i=0;i<=3;i++){
 	      for(int j=0;j<=3;j++){
 		std::fscanf(myfile, "%f ", &temp);
-		tempMatrix[i][j]=temp;
+		matrix[i][j]=temp;
 	      }
 	    }
+	    if(counter == count) break;
 	    counter++;
 	  }
 	    
@@ -127,7 +126,7 @@ void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
 	  ptr->SetMatrix(matrix);
 	}
       fclose(myfile);
-      this->TrackingMsg->Pack();
+      // this->TrackingMsg->Pack();
       data = this->TrackingMsg;
   }
   else
@@ -237,20 +236,10 @@ void qDataReadingTracker::GetFileMatrix(igtl::Matrix4x4& matrix, std::string fil
     float temp;
     const char * ccpfilename = filename.c_str();
     FILE *myfile = fopen(ccpfilename, "r");
-  //  std::ifstream myfile ( filename );
-  //  int value=0;
-    //std::string line;
-//    std::istream& getline();
-    //std::ifstream line;
-// //    while(!myfile.eof()){
     for(int i=0;i<=4;i++){
         for(int j=0;j<=4;j++){
-         //   if(!myfile.eof()){
-                    //std::getline(myfile, line);
-//                getline(myfile, line);
-//                getline(line, value, " ");
+
             std::fscanf(myfile, "%f ", &temp);
-           // if(temp==" ")continue;
                 matrix[i][j]=temp;
                 }
             }

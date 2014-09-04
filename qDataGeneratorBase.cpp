@@ -18,7 +18,7 @@
 //-----------------------------------------------------------------------------
 qDataGeneratorBase::qDataGeneratorBase()
 {
-  this->TimerInterval = 300; // default is 100 ms
+  this->TimerInterval = 100; // default is 100 ms
   this->Timer = NULL;
 }
 

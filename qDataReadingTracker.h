@@ -43,7 +43,7 @@ protected:
     
     // Function to Read matrix.
     void    GetFileMatrix(igtl::Matrix4x4& matrix, std::string);
-    
+    int count;
     
 protected:
     
@@ -57,9 +57,7 @@ protected:
     
     int fTracking;
 
-    std::string FileName;
-    int count;
-    
+    std::string FileName;    
 };
 
 #endif
