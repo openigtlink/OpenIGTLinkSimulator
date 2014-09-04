@@ -58,6 +58,7 @@ protected:
     int fTracking;
 
     std::string FileName;
+    int count;
     
 };
 

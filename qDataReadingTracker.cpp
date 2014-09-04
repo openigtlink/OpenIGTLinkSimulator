@@ -19,8 +19,7 @@
 #include <cmath>
 #include "qDataReadingTracker.h"
 
-//#include "ui_OpenIGTLinkSimulatorWindow.h"
-
+//#include "ui_OpenIGTLinkSimulatorWindow.h
 //-----------------------------------------------------------------------------
 qDataReadingTracker::qDataReadingTracker(): qDataGeneratorBase()
 {
@@ -71,11 +70,70 @@ void qDataReadingTracker::RegisterHandlers(igtl::TCPConnectorServerOIGTL * conne
     connector->RegisterMessageHandler("STP_TDATA", this);
 }
 
-
 //----------------------------------------------------------------------------
 void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
 {
-  std::cerr << "void GenerateData(igtl::MessageBase::Pointer& data) is called" << std::endl;
+  if(FileName!="") {
+    // (*c)++;
+    this->count++;
+    float temp;
+    float tempMatrix[4][4];
+    float matrix[4][4];
+    // igtl::Matrix4x4 matrix;
+    const char * ccpFileName = FileName.c_str();
+    FILE *myfile = std::fopen(ccpFileName, "r");
+    //int counter=0;
+    igtl::TrackingDataElement::Pointer ptr;                         //!
+      for(int k = 0; k < this->NumberOfChannels; k ++)
+	{
+	  /*	  int counter=0;
+	  this->TrackingMsg->GetTrackingDataElement(k, ptr);
+	  	  while(counter<=count){
+	    for(int i=0; i<=3; i++){
+	      for(int j=0; j<=3; j++){
+	  	std::fscanf(myfile, "%f ", &temp);
+	      }
+	    }
+	     counter++;
+	   }
+	  for(int i=0;i<=3;i++){
+	    for(int j=0;j<=3;j++){
+	      std::fscanf(myfile, "%f ", &temp);
+	      matrix[i][j]=temp;
+	    }
+	}
+	  */
+	  int counter=0;
+	  while(counter!=count){
+	    for(int i=0;i<=3;i++){
+	      for(int j=0;j<=3;j++){
+		std::fscanf(myfile, "%f ", &temp);
+		tempMatrix[i][j]=temp;
+	      }
+	    }
+	    counter++;
+	  }
+	    
+	  std::cout << "=============" << std::endl;
+	  std::cout << matrix[0][0] << ", " << matrix[0][1] << ", " << matrix[0][2] << ", " << matrix[0][3] << std::endl;
+	  std::cout << matrix[1][0] << ", " << matrix[1][1] << ", " << matrix[1][2] << ", " << matrix[1][3] << std::endl;
+	  std::cout << matrix[2][0] << ", " << matrix[2][1] << ", " << matrix[2][2] << ", " << matrix[2][3] << std::endl;
+	  std::cout << matrix[3][0] << ", " << matrix[3][1] << ", " << matrix[3][2] << ", " << matrix[3][3] << std::endl;
+	  std::cout << "counter="<<counter << std::endl;
+	   std::cout << "count="<<count << std::endl;
+	  std::cout << "=============" << std::endl;
+	  //igtl::PrintMatrix(matrix);
+	  //std::cerr << "void GenerateData(igtl::MessageBase::Pointer& data) is called" << std::endl;
+	  ptr->SetMatrix(matrix);
+	}
+      fclose(myfile);
+      this->TrackingMsg->Pack();
+      data = this->TrackingMsg;
+  }
+  else
+    {
+      std::cerr << "Insufficient file name." << std::endl;
+    } 
 }
 
 //----------------------------------------------------------------------------
@@ -230,10 +288,3 @@ void qDataReadingTracker::GetFileMatrix(igtl::Matrix4x4& matrix, std::string fil
     igtl::PrintMatrix(matrix);
     //    teIncomingData->setText( matrix );
      */
-
-
-
-
-
-
-

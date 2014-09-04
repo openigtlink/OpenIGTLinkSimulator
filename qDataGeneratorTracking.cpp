@@ -170,9 +170,9 @@ void qDataGeneratorTracking::GetRandomTestMatrix(igtl::Matrix4x4& matrix, float 
   float orientation[4];
 
   // random position
-  position[0] = 50.0 * cos(phi) + 50.0 * sin(phi);
-  position[1] = 50.0 * sin(phi*phi);
-  position[2] = 50.0 * cos(phi);
+  position[0] = 50.0 * cos(phi) + 20.0 * sin(phi);
+  position[1] = 2.0 * cos(phi*phi);
+  position[2] = 30.0 * sin(phi);
   phi = phi + 0.2;
 
   // random orientation

@@ -18,7 +18,7 @@
 //-----------------------------------------------------------------------------
 qDataGeneratorBase::qDataGeneratorBase()
 {
-  this->TimerInterval = 100; // default is 100 ms
+  this->TimerInterval = 300; // default is 100 ms
   this->Timer = NULL;
 }
 
@@ -72,7 +72,9 @@ void qDataGeneratorBase::ProcessTimer()
     {
     igtl::MessageBase::Pointer message;
 //        if(filename==""){
+//    int c=0;
     this->GenerateData(message);
+    //(*c)++;
     if (message.IsNotNull())
       {
       this->Connector->PushMessage(message);
@@ -88,19 +90,18 @@ void qDataGeneratorBase::ProcessTimer(std::string filename)
         this->Connector->GetStatus() == igtl::TCPConnectorBase::STATUS_CONNECTED)
     {
         igtl::MessageBase::Pointer message;
-        if(filename==""){
-            this->GenerateData(message);
-        }
-        else{
-            this->ReadData(message, filename);
-        }
-        if (message.IsNotNull())
-        {
+	//   if(filename==""){
+	this->GenerateData(message);
+	// }
+        //else{
+	//  this->ReadData(message, filename);
+	    // }
+	    if (message.IsNotNull())
+	  {
             this->Connector->PushMessage(message);
-        }
+	  }
     }
 }
-
 
 
 
