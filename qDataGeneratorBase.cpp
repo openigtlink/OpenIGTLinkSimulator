@@ -71,19 +71,16 @@ void qDataGeneratorBase::ProcessTimer()
       this->Connector->GetStatus() == igtl::TCPConnectorBase::STATUS_CONNECTED)
     {
     igtl::MessageBase::Pointer message;
-//        if(filename==""){
-//    int c=0;
     this->GenerateData(message);
-    //(*c)++;
+    
     if (message.IsNotNull())
       {
-      this->Connector->PushMessage(message);
+	this->Connector->PushMessage(message);
       }
     }
 }
-
 //------------------------------------------------------------------------------
-void qDataGeneratorBase::ProcessTimer(std::string filename)
+/*void qDataGeneratorBase::ProcessTimer(std::string filename)
 {
     
     if (this->Connector.IsNotNull() &&
@@ -102,7 +99,7 @@ void qDataGeneratorBase::ProcessTimer(std::string filename)
 	  }
     }
 }
-
+*/
 
 
 

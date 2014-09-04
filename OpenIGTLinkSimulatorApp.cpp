@@ -192,6 +192,8 @@ void OpenIGTLinkSimulatorApp::clientActivateClicked()
         fClientActive = false;
         if (oigtlConnector.IsNotNull())
         {
+	  // std::cerr << "Deactivating OpenIGTLink connector with:" << std::endl;
+          //  std::cerr << "    Port: " << igtlPort.toInt() << std::endl;
             oigtlConnector->Deactivate();
         }
         rbTrackingFile->setEnabled(true);
@@ -208,7 +210,7 @@ void OpenIGTLinkSimulatorApp::clientActivateClicked()
     else                                        //if Deactivated and data selected.
     {
         fClientActive = true;
-
+	
         if (oigtlConnector.IsNotNull())
         {
             std::cerr << "Activating OpenIGTLink connector with:" << std::endl;
@@ -216,6 +218,18 @@ void OpenIGTLinkSimulatorApp::clientActivateClicked()
             oigtlConnector->SetPort(igtlPort.toInt());
             oigtlConnector->Activate();
         }
+	else
+	  { oigtlConnector = igtl::TCPConnectorServerOIGTL::New();
+	    oigtlConnector->SetPort(18944);
+	    if (oigtlConnector.IsNotNull())
+	      {
+		std::cerr << "Activating OpenIGTLink connector with:" << std::endl;
+		std::cerr << "    Port: " << igtlPort.toInt() << std::endl;
+		oigtlConnector->SetPort(igtlPort.toInt());
+		oigtlConnector->Activate();
+	      }
+	  }
+	    
 
         rbTrackingFile->setEnabled(false);
         rbTrackingRandom->setEnabled(false);

@@ -73,27 +73,30 @@ void qDataReadingTracker::RegisterHandlers(igtl::TCPConnectorServerOIGTL * conne
 //----------------------------------------------------------------------------
 void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
 {
-  if(FileName!="") {
-    // (*c)++;
+  if(!this->fTracking && FileName!="")
+    {
     this->count++;
     float temp;
-    float tempMatrix[4][4];
-    float matrix[4][4];
-    // igtl::Matrix4x4 matrix;
+    //    float matrix[4][4];
+    igtl::Matrix4x4 matrix;
     const char * ccpFileName = FileName.c_str();
     FILE *myfile = std::fopen(ccpFileName, "r");
     //int counter=0;
     igtl::TrackingDataElement::Pointer ptr;                         //!
-      for(int k = 0; k < this->NumberOfChannels; k ++)
-	{
-	  /*	  int counter=0;
+
+    for(int k = 0; k < this->NumberOfChannels; k ++)
+    	{
 	  this->TrackingMsg->GetTrackingDataElement(k, ptr);
-	  	  while(counter<=count){
+	  int counter=0;
+	  while(counter<count){
+	     //if(counter == count-1)break;
 	    for(int i=0; i<=3; i++){
 	      for(int j=0; j<=3; j++){
 	  	std::fscanf(myfile, "%f ", &temp);
 	      }
+	      std::fscanf(myfile, "\n");
 	    }
+	    std::fscanf(myfile,"\n");
 	     counter++;
 	   }
 	  for(int i=0;i<=3;i++){
@@ -101,35 +104,33 @@ void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
 	      std::fscanf(myfile, "%f ", &temp);
 	      matrix[i][j]=temp;
 	    }
-	}
-	  */
+	    std::fscanf(myfile,"\n\n");
+	  }
+	/*
 	  int counter=0;
-	  while(counter!=count){
+	  while(1){
 	    for(int i=0;i<=3;i++){
 	      for(int j=0;j<=3;j++){
 		std::fscanf(myfile, "%f ", &temp);
-		tempMatrix[i][j]=temp;
+		matrix[i][j]=temp;
 	      }
 	    }
+	    if(counter == count) break;
 	    counter++;
 	  }
-	    
-	  std::cout << "=============" << std::endl;
-	  std::cout << matrix[0][0] << ", " << matrix[0][1] << ", " << matrix[0][2] << ", " << matrix[0][3] << std::endl;
-	  std::cout << matrix[1][0] << ", " << matrix[1][1] << ", " << matrix[1][2] << ", " << matrix[1][3] << std::endl;
-	  std::cout << matrix[2][0] << ", " << matrix[2][1] << ", " << matrix[2][2] << ", " << matrix[2][3] << std::endl;
-	  std::cout << matrix[3][0] << ", " << matrix[3][1] << ", " << matrix[3][2] << ", " << matrix[3][3] << std::endl;
-	  std::cout << "counter="<<counter << std::endl;
-	   std::cout << "count="<<count << std::endl;
-	  std::cout << "=============" << std::endl;
-	  //igtl::PrintMatrix(matrix);
-	  //std::cerr << "void GenerateData(igtl::MessageBase::Pointer& data) is called" << std::endl;
+	*/
+	  //  std::cout << "counter="<<counter << std::endl;
+	  //std::cout << "count="<<count << std::endl;
+	  igtl::PrintMatrix(matrix);
 	  ptr->SetMatrix(matrix);
-	}
-      fclose(myfile);
+	  // fclose(myfile);
+	  }
+    fclose(myfile);
       this->TrackingMsg->Pack();
       data = this->TrackingMsg;
   }
+
+
   else
     {
       std::cerr << "Insufficient file name." << std::endl;
@@ -205,58 +206,50 @@ int qDataReadingTracker::HandleReceivedMessage(igtl::Socket *socket, igtl::Messa
         stpMsg = igtl::StopTrackingDataMessage::New();
         stpMsg->SetMessageHeader(header);
         stpMsg->AllocatePack();
-        if (socket && socket->GetConnected())
-        {
-            int r = socket->Receive(stpMsg->GetPackBodyPointer(), stpMsg->GetPackBodySize());
-            if (r == 0)
-            {
-                // Connection closed.
-                return 0;
-            }
-        }
-        else
-        {
-            return 0;
-        }
-        
-        int c = stpMsg->Unpack(1);
-        if (c & igtl::MessageHeader::UNPACK_BODY) // if CRC check is OK
-        {  //up to here
+	//        if (socket && socket->GetConnected())
+        //{
+	//     int r = socket->Receive(stpMsg->GetPackBodyPointer(), stpMsg->GetPackBodySize());
+        //    if (r == 0)
+        //    {
+        //        // Connection closed.
+        //        return 0;
+        //    }
+        //}
+        //else
+        //{
+        //    return 0;
+        //}
+	// 
+        //int c = stpMsg->Unpack(1);
+        //if (c & igtl::MessageHeader::UNPACK_BODY) // if CRC check is OK
+        //{  //up to here
             this->fTracking = 0;
             return 1;
-        }
+	    // }
     }
     return 1;
-    
 }
+    
+
 
 
 //------------------------------------------------------------
 void qDataReadingTracker::GetFileMatrix(igtl::Matrix4x4& matrix, std::string filename)
 {
-    float temp;
+  /*    float temp;
     const char * ccpfilename = filename.c_str();
     FILE *myfile = fopen(ccpfilename, "r");
-  //  std::ifstream myfile ( filename );
-  //  int value=0;
-    //std::string line;
-//    std::istream& getline();
-    //std::ifstream line;
-// //    while(!myfile.eof()){
     for(int i=0;i<=4;i++){
         for(int j=0;j<=4;j++){
-         //   if(!myfile.eof()){
-                    //std::getline(myfile, line);
-//                getline(myfile, line);
-//                getline(line, value, " ");
+
             std::fscanf(myfile, "%f ", &temp);
-           // if(temp==" ")continue;
                 matrix[i][j]=temp;
                 }
             }
         igtl::PrintMatrix(matrix);
         fclose(myfile);
-    }
+  */
+}
 // //    }
 
 
