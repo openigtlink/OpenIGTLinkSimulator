@@ -43,7 +43,7 @@ qDataReadingTracker::qDataReadingTracker(): qDataGeneratorBase()
     
     this->fTracking = 0;
     
-    for (int i = 0; i < this->NumberOfChannels; i ++)
+    for (int i = 0; i <this->NumberOfChannels; i ++)
     {
         std::stringstream ss;
         ss << "Channel " << i;
@@ -51,8 +51,8 @@ qDataReadingTracker::qDataReadingTracker(): qDataGeneratorBase()
         this->TrackingElement[i]->SetName(ss.str().c_str());
         this->TrackingElement[i]->SetType(igtl::TrackingDataElement::TYPE_TRACKER);
         this->TrackingMsg->AddTrackingDataElement(this->TrackingElement[i]);
-        //this->Phi[i] = 0.0;
-        //this->Theta[i] = 0.0;
+        this->Phi[i] = 0.0;
+        this->Theta[i] = 0.0;
     }
 }
 
@@ -83,12 +83,12 @@ void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
     FILE *myfile = std::fopen(ccpFileName, "r");
     //int counter=0;
     igtl::TrackingDataElement::Pointer ptr;                         //!
-
+    // std::cerr << NumberOfChannels << std::endl;
     for(int k = 0; k < this->NumberOfChannels; k ++)
     	{
 	  this->TrackingMsg->GetTrackingDataElement(k, ptr);
 	  int counter=0;
-	  while(counter<count){
+	  while(counter<count*NumberOfChannels){
 	     //if(counter == count-1)break;
 	    for(int i=0; i<=3; i++){
 	      for(int j=0; j<=3; j++){
@@ -97,7 +97,7 @@ void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
 	      std::fscanf(myfile, "\n");
 	    }
 	    std::fscanf(myfile,"\n");
-	     counter++;
+	    counter++;
 	   }
 	  for(int i=0;i<=3;i++){
 	    for(int j=0;j<=3;j++){
@@ -124,10 +124,10 @@ void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
 	  igtl::PrintMatrix(matrix);
 	  ptr->SetMatrix(matrix);
 	  // fclose(myfile);
-	  }
+	}
     fclose(myfile);
-      this->TrackingMsg->Pack();
-      data = this->TrackingMsg;
+    this->TrackingMsg->Pack();
+    data = this->TrackingMsg;
   }
 
 
@@ -281,3 +281,30 @@ void qDataReadingTracker::GetFileMatrix(igtl::Matrix4x4& matrix, std::string fil
     igtl::PrintMatrix(matrix);
     //    teIncomingData->setText( matrix );
      */
+
+
+
+//------------------------------------------------------------
+void qDataReadingTracker::ChannelChanged(int i)
+{
+    this->NumberOfChannels = i;
+    
+    this->TrackingElement.resize(this->NumberOfChannels);
+    this->Phi.resize(this->NumberOfChannels);
+    this->Theta.resize(this->NumberOfChannels);
+    
+    this->fTracking = 0;
+    
+    for (int i = 0; i < this->NumberOfChannels; i ++)
+    {
+        std::stringstream ss;
+        ss << "Channel " << i;
+        this->TrackingElement[i] = igtl::TrackingDataElement::New();
+        this->TrackingElement[i]->SetName(ss.str().c_str());
+        this->TrackingElement[i]->SetType(igtl::TrackingDataElement::TYPE_TRACKER);
+        this->TrackingMsg->AddTrackingDataElement(this->TrackingElement[i]);
+        this->Phi[i] = 0.0;
+        this->Theta[i] = 0.0;
+    }
+  
+}

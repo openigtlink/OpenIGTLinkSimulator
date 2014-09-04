@@ -49,12 +49,13 @@ OpenIGTLinkSimulatorApp::OpenIGTLinkSimulatorApp(QWidget *NOTUSED(parent))
   fClientActive  = false;
 
   // Signals and Slots
-    connect(pbFilename, SIGNAL( clicked() ), this, SLOT( getPath() ));
-    connect(rbTrackingRandom, SIGNAL( clicked() ), this, SLOT( disable() ));
-    connect(rbTrackingFile, SIGNAL( clicked() ), this, SLOT( enable() ));
+  connect(pbFilename, SIGNAL( clicked() ), this, SLOT( getPath() ));
+  connect(rbTrackingRandom, SIGNAL( clicked() ), this, SLOT( disable() ));
+  connect(rbTrackingFile, SIGNAL( clicked() ), this, SLOT( enable() ));
   connect(pbQuit, SIGNAL( clicked() ), this, SLOT( quit() ));
   connect(pbAbout, SIGNAL( clicked() ), this, SLOT( about() ));
-          /*corrupt*/  //   connect(rbTrackingRandom, SIGNAL( clicked() ), this, SLOT( generate() ));
+  //connect(sbTrackingChannels, SIGNAL( valueChanged(int) ), this, SLOT( setValue(int)));
+  connect(sbTrackingChannels, SIGNAL( valueChanged(int) ), this, SLOT( channel(int) )); 
 //    connect(leFilename, SIGNAL( textChanged()), this, SLOT( generate());
   //connect(pbScannerActivate, SIGNAL( clicked() ), this, SLOT( scannerActivateClicked() ));
   connect(pbClientActivate, SIGNAL( clicked() ), this, SLOT( clientActivateClicked() ));
@@ -320,6 +321,13 @@ void OpenIGTLinkSimulatorApp::updateStatus()
   //leScannerAddress->setEnabled(editScannerFlag);
   //leControlPort->setEnabled(editScannerFlag);
   //leImagePort->setEnabled(editClientFlag);
+}
+
+void OpenIGTLinkSimulatorApp::channel(int i)
+{
+  std::cerr << "Channel changed to:" << i << std::endl;
+  this->TrackingDataReader->ChannelChanged(i);
+  //  this->TrackingDataGenerator->ChannelChanged(i);
 }
 
 void OpenIGTLinkSimulatorApp::quit() 

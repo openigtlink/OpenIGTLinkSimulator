@@ -31,6 +31,7 @@ public:
     virtual const char * GetClassName() { return "qDataReadingTracking"; };
     
     void    SetFileName(std::string name) { this->FileName = name; };
+     virtual void ChannelChanged(int i);
     
 protected:
     
@@ -40,7 +41,7 @@ protected:
     virtual void ReadData(igtl::MessageBase::Pointer& data, std::string);
     
     virtual int  HandleReceivedMessage(igtl::Socket *socket, igtl::MessageHeader * header);
-    
+
     // Function to Read matrix.
     void    GetFileMatrix(igtl::Matrix4x4& matrix, std::string);
 

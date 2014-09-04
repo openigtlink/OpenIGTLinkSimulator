@@ -46,7 +46,7 @@ public slots:
   void about();
   void enable();
   void disable();
-  //void generate(std::string);
+  void channel(int i);
   
   void scannerActivateClicked();
   void clientActivateClicked();
