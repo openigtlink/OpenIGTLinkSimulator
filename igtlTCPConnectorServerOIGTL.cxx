@@ -1,14 +1,14 @@
 /*=========================================================================
-
+  
   Program:   OpenIGTLink Connector Class for OpenIGTLink Simulator
   Language:  C++
-
+  
   Copyright (c) Brigham and Women's Hospital. All rights reserved.
 
   This software is distributed WITHOUT ANY WARRANTY; without even
   the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
   PURPOSE.  See the above copyright notices for more information.
-
+  
   =========================================================================*/
 
 
@@ -66,12 +66,12 @@ namespace igtl
 	    return 0;
 	  }
       }
-
+    
     // TODO: Does ReceiveMessage() in MonitorThreadFunction() returns 0 in this case?
     return 0;
   }
-
-
+  
+  
   //-----------------------------------------------------------------------------
   int TCPConnectorServerOIGTL::Initialize()
   {
@@ -80,25 +80,25 @@ namespace igtl
 	this->HeaderMsg = igtl::MessageHeader::New();
 	return 1;
       }
-
+    
     this->HeaderMsg = NULL;
     return 0;
 
   }
-
+  
   //-----------------------------------------------------------------------------
   int TCPConnectorServerOIGTL::ReceiveMessage()
   {
   
     // std::cerr << "TCPConnectorServerOIGTL::ReceiveMessage() : Waiting for messages." << std::endl;
-
+    
     // Initialize receive buffer
     //this->HeaderMsg->InitPack();
-
+    
     igtl::MessageHeader::Pointer header;
     header = igtl::MessageHeader::New();
     header->InitPack();
-
+    
     if (this->Socket.IsNotNull() && this->Socket->GetConnected())
       {
 	int r = this->Socket->Receive(header->GetPackPointer(),
@@ -119,16 +119,16 @@ namespace igtl
       {
 	return 0;
       }
-
+    
     // Deserialize the header
     header->Unpack();
-
+    
     // Check data type and receive data body
     MessageHandlerTypeMapType::iterator iter;
     iter = this->MessageHandlerTypeMap.find(header->GetDeviceType());
-
+    
     qDataGeneratorBase* handler = NULL;
-
+    
     if (iter != this->MessageHandlerTypeMap.end())
       {
 	MessageHandlerNameMapType& nameMap = iter->second;
@@ -148,12 +148,12 @@ namespace igtl
 	      }
 	  }
       }
-
+    
     if (handler)
       {
 	handler->HandleReceivedMessage(this->Socket, header);
       }
-
+    
     else // No handler is available for this type of message.
       {
 	if (this->Socket.IsNotNull() && this->Socket->GetConnected())
@@ -162,11 +162,11 @@ namespace igtl
 	  }
       }
 
-          
+    
     return 1;
-
+    
   }
-
+  
 
   //-----------------------------------------------------------------------------
   int TCPConnectorServerOIGTL::Finalize()
@@ -177,16 +177,16 @@ namespace igtl
       }
     return 0;
   }
-
-
+  
+  
   //-----------------------------------------------------------------------------
   void TCPConnectorServerOIGTL::RegisterMessageHandler(const char* type, qDataGeneratorBase* handler)
   {
-  
+    
     MessageHandlerTypeMapType::iterator iter;
-  
+    
     iter = this->MessageHandlerTypeMap.find(type);
-
+    
     if (iter == this->MessageHandlerTypeMap.end()) // the type has not been registered yet.
       {
 	MessageHandlerNameMapType nameMap;
@@ -199,18 +199,18 @@ namespace igtl
 	nameMap.clear();
 	nameMap["*"] = handler;
       }
-
+    
   }
-
-
+  
+  
   //-----------------------------------------------------------------------------
   void TCPConnectorServerOIGTL::RegisterMessageHandler(const char* type, const char* name, qDataGeneratorBase* handler)
   {
-  
+    
     MessageHandlerTypeMapType::iterator iter;
-  
+    
     iter = this->MessageHandlerTypeMap.find(type);
-
+    
     std::string nkey = std::string("+") + name;
     if (iter == this->MessageHandlerTypeMap.end()) // the type has not been registered yet.
       {
@@ -224,35 +224,35 @@ namespace igtl
 	nameMap[nkey] = handler;
       }
   }
-
-
+  
+  
   //-----------------------------------------------------------------------------
   void TCPConnectorServerOIGTL::UnRegisterMessageHandler(const char* type)
   {
 
     MessageHandlerTypeMapType::iterator iter;
-  
+    
     iter = this->MessageHandlerTypeMap.find(type);
-  
+    
     if (iter != this->MessageHandlerTypeMap.end()) // the type is found in the map
       {
 	this->MessageHandlerTypeMap.erase(iter);
       }
   }
-
-
+  
+  
   //-----------------------------------------------------------------------------
   int TCPConnectorServerOIGTL::ReceiveTransform(igtl::MessageHeader * header)
   {
-
+    
     //std::cerr << "TCPConnectorServerOIGTL::ReceiveTransform() : Receiving TRANSFORM data type." << std::endl;
-  
+    
     // Create a message buffer to receive transform data
     igtl::TransformMessage::Pointer transMsg;
     transMsg = igtl::TransformMessage::New();
     transMsg->SetMessageHeader(header);
     transMsg->AllocatePack();
-  
+    
     // Receive transform data from the socket
     if (this->Socket.IsNotNull() && this->Socket->GetConnected())
       {
@@ -267,11 +267,11 @@ namespace igtl
       {
 	return 0;
       }
-  
+    
     // Deserialize the transform data
     // If you want to skip CRC check, call Unpack() without argument.
     int c = transMsg->Unpack(1);
-  
+    
     if (c & igtl::MessageHeader::UNPACK_BODY) // if CRC check is OK
       {
 	if (this->OutputConnector.IsNotNull())
@@ -280,11 +280,11 @@ namespace igtl
 	  }
 	return 1;
       }
-
+    
     return 1;
   }
-    
-
+  
+  
 } // End of igtl namespace
 
 

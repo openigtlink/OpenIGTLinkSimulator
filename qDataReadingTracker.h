@@ -38,10 +38,6 @@ class IGTLCommon_EXPORT qDataReadingTracker : public qDataGeneratorBase
   virtual void ReadData(igtl::MessageBase::Pointer& data);
   virtual int  HandleReceivedMessage(igtl::Socket *socket, igtl::MessageHeader * header);
   
-  // Function to Read matrix.
-  // void    GetFileMatrix(igtl::Matrix4x4& matrix, std::string);
-  
-  
  protected:
   
   igtl::TrackingDataMessage::Pointer TrackingMsg;

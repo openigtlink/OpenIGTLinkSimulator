@@ -190,28 +190,6 @@ int qDataReadingTracker::HandleReceivedMessage(igtl::Socket *socket, igtl::Messa
 
 
 //------------------------------------------------------------
-/*void qDataReadingTracker::GetFileMatrix(igtl::Matrix4x4& matrix, std::string filename)
-{
-  float temp;
-  const char * ccpfilename = filename.c_str();
-  FILE *myfile = fopen(ccpfilename, "r");
-  
-  for(int i=0;i<=4;i++)
-    {
-      for(int j=0;j<=4;j++)
-	{
-	  std::fscanf(myfile, "%f ", &temp);
-	  matrix[i][j]=temp;
-	}
-    }
-  igtl::PrintMatrix(matrix);
-  fclose(myfile);  
-
-}
-*/
-
-
-//------------------------------------------------------------
 void qDataReadingTracker::ChannelChanged(int i)
 {
   this->TrackingMsg = igtl::TrackingDataMessage::New();

@@ -1,10 +1,10 @@
 /*=========================================================================
-
+  
   Program:   OpenIGTLink Connector Class for OpenIGTLink Simulator
   Language:  C++
 
   Copyright (c) Brigham and Women's Hospital. All rights reserved.
-
+  
   This software is distributed WITHOUT ANY WARRANTY; without even
   the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
   PURPOSE.  See the above copyright notices for more information.
@@ -21,7 +21,6 @@
 #include "igtlMessageHeader.h"
 
 #include "igtlTCPConnectorServer.h"
-
 
 class qDataGeneratorBase;
 
@@ -42,11 +41,11 @@ namespace igtl
       igtlNewMacro(igtl::TCPConnectorServerOIGTL);
 
   public:
-
+    
     virtual const char * GetClassName() { return "OpenIGTLink"; };
     int SetMessageHandler();
     virtual int    PushMessage(igtl::MessageBase * message);
-
+    
     // Functions to register message handlers. RegisterMessageHandler(type, handler) registers
     // a handler for any messages with the specified type, while RegisterMessageHandler(type, name, handler)
     // registers handler for messages with the specified type and name. If the functions are called
@@ -76,24 +75,24 @@ namespace igtl
     void    RegisterMessageHandler(const char* type, qDataGeneratorBase* handler);
     void    RegisterMessageHandler(const char* type, const char* name, qDataGeneratorBase* handler);
     void    UnRegisterMessageHandler(const char* type);
-
+    
   protected:
-
+    
     TCPConnectorServerOIGTL();
     ~TCPConnectorServerOIGTL();
-
+    
     void PrintSelf(std::ostream& os) const;
 
     virtual int Initialize();
     virtual int ReceiveMessage();
     virtual int Finalize();
-
+    
     int ReceiveTransform(igtl::MessageHeader * header);
   
   private:
-  
+    
     igtl::MessageHeader::Pointer HeaderMsg;
-
+    
     // Templates to record message handlers
     // The ConnectorServerOIGTL class manages message handlers (generators) based on
     // message type string and message name string. The following pseudo code shows a process
@@ -115,15 +114,15 @@ namespace igtl
     //
     //   - key for the wild card: "*"
     //   - key for string "*": "+*"
-
-
+    
+    
     typedef std::map< std::string, qDataGeneratorBase* >    MessageHandlerNameMapType;
     typedef std::map< std::string, MessageHandlerNameMapType > MessageHandlerTypeMapType;
 
     MessageHandlerTypeMapType MessageHandlerTypeMap;
 
   };
-
+  
 }
 
 #endif //__THREAD_H

@@ -79,7 +79,6 @@ void qDataGeneratorTracking::GenerateData(igtl::MessageBase::Pointer& data)
       igtl::TrackingDataElement::Pointer ptr;
       for (int i = 0; i < this->NumberOfChannels; i ++)
 	{
-	  std::cerr << "Data for Channel:" << i << std::endl;
 	  this->TrackingMsg->GetTrackingDataElement(i, ptr);
 	  GetRandomTestMatrix(matrix, this->Phi[i], this->Theta[i]);
 	  ptr->SetMatrix(matrix);
