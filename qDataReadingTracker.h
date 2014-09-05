@@ -27,24 +27,19 @@ class IGTLCommon_EXPORT qDataReadingTracker : public qDataGeneratorBase
   
   qDataReadingTracker();
   virtual ~qDataReadingTracker();
-  
   virtual const char * GetClassName() { return "qDataReadingTracking"; };
-  
-  void    SetFileName(std::string name) { this->FileName = name; };
+
+  void SetFileName(std::string name) { this->FileName = name; };
   virtual void ChannelChanged(int i);
   
  protected:
   
   virtual void RegisterHandlers(igtl::TCPConnectorServerOIGTL * connector);
-  virtual void GenerateData(igtl::MessageBase::Pointer& data);
-  
   virtual void ReadData(igtl::MessageBase::Pointer& data);
-  
   virtual int  HandleReceivedMessage(igtl::Socket *socket, igtl::MessageHeader * header);
   
   // Function to Read matrix.
-  void    GetFileMatrix(igtl::Matrix4x4& matrix, std::string);
-  // int count;
+  // void    GetFileMatrix(igtl::Matrix4x4& matrix, std::string);
   
   
  protected:

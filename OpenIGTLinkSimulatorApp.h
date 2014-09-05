@@ -40,7 +40,6 @@ class OpenIGTLinkSimulatorApp : public QMainWindow, private Ui::OpenIGTLinkSimul
  public:
   OpenIGTLinkSimulatorApp(QWidget *parent = 0);
   
-  
   public slots:
     void getPath();
     void about();
@@ -50,17 +49,17 @@ class OpenIGTLinkSimulatorApp : public QMainWindow, private Ui::OpenIGTLinkSimul
   
     void scannerActivateClicked();
     void clientActivateClicked();
-
+    
     void scannerAddressChanged( const QString & text );
     void imagePortChanged( const QString & text );
     void controlPortChanged( const QString & text );
     void igtlPortChanged( const QString & text );
-  
+    
     void updateStatus();
     void quit();
 
  private:
-
+    
     void changeStatusTextColor(QLineEdit* le, int status);
     void changeDataIOTextColor(QLineEdit* le, int status);
 
@@ -83,7 +82,7 @@ class OpenIGTLinkSimulatorApp : public QMainWindow, private Ui::OpenIGTLinkSimul
 
 
 };
- 
- 
+
+
 #endif
 

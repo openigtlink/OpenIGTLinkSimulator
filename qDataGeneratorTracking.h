@@ -23,8 +23,7 @@ class IGTLCommon_EXPORT qDataGeneratorTracking : public qDataGeneratorBase
  public:
   
   qDataGeneratorTracking();
-  virtual ~qDataGeneratorTracking();
-  
+  virtual ~qDataGeneratorTracking(); 
   virtual const char * GetClassName() { return "qDataGeneratorTracking"; };
   virtual void ChannelChanged(int i);
 
@@ -32,7 +31,6 @@ class IGTLCommon_EXPORT qDataGeneratorTracking : public qDataGeneratorBase
   
   virtual void RegisterHandlers(igtl::TCPConnectorServerOIGTL * connector);  
   virtual void GenerateData(igtl::MessageBase::Pointer& data);
-  
   virtual int  HandleReceivedMessage(igtl::Socket *socket, igtl::MessageHeader * header);
 
   // Function to generate random matrix.

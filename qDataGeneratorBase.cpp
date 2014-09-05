@@ -31,10 +31,8 @@ qDataGeneratorBase::~qDataGeneratorBase()
 //-----------------------------------------------------------------------------
 void qDataGeneratorBase::SetConnector(igtl::TCPConnectorServerOIGTL * connector)
 {
-  
   this->Connector = connector;
   this->RegisterHandlers(connector);
-  
 }
 
 
@@ -45,11 +43,13 @@ void qDataGeneratorBase::Start()
   this->Timer = new QTimer(this);
   connect(this->Timer, SIGNAL(timeout()), this, SLOT(ProcessTimer()));
   this->Timer->start(this->TimerInterval); 
+  
 }
 
 //-----------------------------------------------------------------------------
 void qDataGeneratorBase::Stop()
 {
+
   if (this->Timer != NULL)
     {
       if (this->Timer->isActive() == true)
@@ -60,6 +60,7 @@ void qDataGeneratorBase::Stop()
       delete this->Timer;
       this->Timer = NULL;
     }
+
 }
 
 
@@ -71,44 +72,12 @@ void qDataGeneratorBase::ProcessTimer()
       this->Connector->GetStatus() == igtl::TCPConnectorBase::STATUS_CONNECTED)
     {
       igtl::MessageBase::Pointer message;
-      //Must somehow use if() to decide whether to use GenerateData or ReadData.
-      //if(i==0)
-      //  {
       this->GenerateData(message);
-      //  }
-      // else
-      //  {
       this->ReadData(message);
-      // }
       if (message.IsNotNull())
 	{
 	  this->Connector->PushMessage(message);
 	}
     }
-}
-//------------------------------------------------------------------------------
-/*void qDataGeneratorBase::ProcessTimer(std::string filename)
-  {
   
-  if (this->Connector.IsNotNull() &&
-  this->Connector->GetStatus() == igtl::TCPConnectorBase::STATUS_CONNECTED)
-  {
-  igtl::MessageBase::Pointer message;
-  //   if(filename==""){
-  this->GenerateData(message);
-  // }
-  //else{
-  //  this->ReadData(message, filename);
-  // }
-  if (message.IsNotNull())
-  {
-  this->Connector->PushMessage(message);
-  }
-  }
-  }
-*/
-
-
-
-
-
+}

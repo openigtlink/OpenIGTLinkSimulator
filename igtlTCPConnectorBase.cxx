@@ -63,16 +63,12 @@ namespace igtl
     TCPConnectorBase * con = static_cast<TCPConnectorBase *>(info->UserData);
 
     con->Active = 0;
-    while (!con->Initialize())
+    if (!con->Initialize())
       {
-	//   while(!con->Initialize()){
-            
-	//   }
 	std::cerr << "TCPConnectorBase::MonitorThreadFunction(): Failed to initialize a server socket." << std::endl;
 	return;
-	con->Initialize();
       }
-
+    
     while (con->Active >= 0)
       {
 	if (con->ConfigurationUpdated)
@@ -101,7 +97,7 @@ namespace igtl
 	  }
 	igtl::Sleep(500);
       }  
-
+    
     con->Finalize();
   }
   // End of igtl namespace
