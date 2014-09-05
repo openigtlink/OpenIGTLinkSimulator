@@ -9,7 +9,7 @@
   the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
   PURPOSE.  See the above copyright notices for more information.
 
-=========================================================================*/
+  =========================================================================*/
 
 
 #ifndef __TCPConnectorServer_H
@@ -24,42 +24,42 @@
 namespace igtl
 {
 
-class IGTLCommon_EXPORT TCPConnectorServer : public TCPConnectorBase
-{
-public:
+  class IGTLCommon_EXPORT TCPConnectorServer : public TCPConnectorBase
+  {
+  public:
   
-  typedef TCPConnectorServer        Self;
-  typedef Object  Superclass;
-  typedef SmartPointer<Self>        Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+    typedef TCPConnectorServer        Self;
+    typedef Object  Superclass;
+    typedef SmartPointer<Self>        Pointer;
+    typedef SmartPointer<const Self>  ConstPointer;
 
-  igtlTypeMacro(igtl::TCPConnectorServer, igtl::TCPConnectorBase)
-  igtlNewMacro(igtl::TCPConnectorServer);
+    igtlTypeMacro(igtl::TCPConnectorServer, igtl::TCPConnectorBase)
+      igtlNewMacro(igtl::TCPConnectorServer);
 
-public:
+  public:
 
-  virtual const char * GetClassName() { return "Server"; };
+    virtual const char * GetClassName() { return "Server"; };
 
-  igtl::Socket::Pointer& GetSocket() { return this->Socket; };
+    igtl::Socket::Pointer& GetSocket() { return this->Socket; };
   
-protected:
-  TCPConnectorServer();
-  ~TCPConnectorServer();
+  protected:
+    TCPConnectorServer();
+    ~TCPConnectorServer();
 
-  void PrintSelf(std::ostream& os) const;
+    void PrintSelf(std::ostream& os) const;
 
-  virtual int Initialize();
-  virtual int WaitForConnection();
-  virtual int ReceiveMessage() { return 0; };
-  virtual int CloseConnection();
-  virtual int Finalize();
+    virtual int Initialize();
+    virtual int WaitForConnection();
+    virtual int ReceiveMessage() { return 0; };
+    virtual int CloseConnection();
+    virtual int Finalize();
 
   
-protected:
-  igtl::ServerSocket::Pointer ServerSocket;
-  igtl::Socket::Pointer       Socket;  
+  protected:
+    igtl::ServerSocket::Pointer ServerSocket;
+    igtl::Socket::Pointer       Socket;  
 
-};
+  };
 
 }
 

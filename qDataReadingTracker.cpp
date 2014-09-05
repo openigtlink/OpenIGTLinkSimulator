@@ -1,15 +1,15 @@
 /*=========================================================================
+  
+  Program:   Data Reading Tracking Class for OpenIGTLink Simulator
+  Language:  C++
+  
+  Copyright (c) Brigham and Women's Hospital. All rights reserved.
  
- Program:   Data Reading Tracking Class for OpenIGTLink Simulator
- Language:  C++
- 
- Copyright (c) Brigham and Women's Hospital. All rights reserved.
- 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notices for more information.
- 
- =========================================================================*/
+  This software is distributed WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.  See the above copyright notices for more information.
+  
+  =========================================================================*/
 #include <stdlib.h>
 #include <iostream>
 #include <string>
@@ -23,15 +23,15 @@
 //-----------------------------------------------------------------------------
 qDataReadingTracker::qDataReadingTracker(): qDataGeneratorBase()
 {
-    
-    //------------------------------------------------------------
-    // Allocate TrackingData Message Class
-    //
-    // NOTE: TrackingDataElement class instances are allocated
-    //       before the loop starts to avoid reallocation
-    //       in each image transfer.
-    
-    //setupUI(this);
+  
+  //------------------------------------------------------------
+  // Allocate TrackingData Message Class
+  //
+  // NOTE: TrackingDataElement class instances are allocated
+  //       before the loop starts to avoid reallocation
+  //       in each image transfer.
+  
+  //setupUI(this);
     this->TrackingMsg = igtl::TrackingDataMessage::New();
     this->TrackingMsg->SetDeviceName("Tracker");
     
@@ -44,7 +44,7 @@ qDataReadingTracker::qDataReadingTracker(): qDataGeneratorBase()
     this->fTracking = 0;
     
     for (int i = 0; i <this->NumberOfChannels; i ++)
-    {
+      {
         std::stringstream ss;
         ss << "Channel " << i;
         this->TrackingElement[i] = igtl::TrackingDataElement::New();
@@ -53,7 +53,7 @@ qDataReadingTracker::qDataReadingTracker(): qDataGeneratorBase()
         this->TrackingMsg->AddTrackingDataElement(this->TrackingElement[i]);
         this->Phi[i] = 0.0;
         this->Theta[i] = 0.0;
-    }
+      }
 }
 
 
@@ -66,97 +66,98 @@ qDataReadingTracker::~qDataReadingTracker()
 //-----------------------------------------------------------------------------
 void qDataReadingTracker::RegisterHandlers(igtl::TCPConnectorServerOIGTL * connector)
 {
-    connector->RegisterMessageHandler("STT_TDATA", this);
-    connector->RegisterMessageHandler("STP_TDATA", this);
+  connector->RegisterMessageHandler("STT_TDATA", this);
+  connector->RegisterMessageHandler("STP_TDATA", this);
 }
 
 //----------------------------------------------------------------------------
 void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
 {
   /* if(this->fTracking && FileName!="")
-    {
+     {
     this->count++;
     float temp;
     igtl::Matrix4x4 matrix;
-
+    
     const char * ccpFileName = FileName.c_str();
     FILE *myfile = std::fopen(ccpFileName, "r");
     //int counter=0;
     igtl::TrackingDataElement::Pointer ptr;                         //!
     // std::cerr << NumberOfChannels << std::endl;
-
+    
     for(int k = 0; k < this->NumberOfChannels; k ++)
-      {
+    {
 	this->TrackingMsg->GetTrackingDataElement(k, ptr);
 	int counter=0;
 	while(counter<count*NumberOfChannels){
 	  //if(counter == count-1)break;
 	  for(int i=0; i<=3; i++){
-	    for(int j=0; j<=3; j++){
-	      std::fscanf(myfile, "%f ", &temp);
+	  for(int j=0; j<=3; j++){
+	  std::fscanf(myfile, "%f ", &temp);
 	    }
 	    std::fscanf(myfile, "\n");
-	  }
-	  std::fscanf(myfile,"\n");
+	    }
+	    std::fscanf(myfile,"\n");
 	  counter++;
-	}
+	  }
 	  for(int i=0;i<=3;i++){
-	    for(int j=0;j<=3;j++){
+	  for(int j=0;j<=3;j++){
 	      std::fscanf(myfile, "%f ", &temp);
 	      matrix[i][j]=temp;
 	    }
+	    
 	    std::fscanf(myfile,"\n\n");
-	  }
-	  //  std::cout << "counter="<<counter << std::endl;
-	  //std::cout << "count="<<count << std::endl;
+	    }
+	    //  std::cout << "counter="<<counter << std::endl;
+	    //std::cout << "count="<<count << std::endl;
 	  igtl::PrintMatrix(matrix);
 	  ptr->SetMatrix(matrix);
-      }
-    fclose(myfile);
-    this->TrackingMsg->Pack();     //!
-    data = this->TrackingMsg;
-
-    //  fclose(myfile);
-    //this->TrackingMsg->Pack();
-    //data = this->TrackingMsg;
-    }
-  else
-    {
-      //   std::cerr << "Insufficient file name." << std::endl;
-    } 
+	  }
+	  fclose(myfile);
+	  this->TrackingMsg->Pack();     //!
+	  data = this->TrackingMsg;
+	  
+	  //  fclose(myfile);
+	  //this->TrackingMsg->Pack();
+	  //data = this->TrackingMsg;
+	  }
+	  else
+	  {
+	  //   std::cerr << "Insufficient file name." << std::endl;
+	  } 
   */
 }
 
 //----------------------------------------------------------------------------
-  void qDataReadingTracker::ReadData(igtl::MessageBase::Pointer& data)
+void qDataReadingTracker::ReadData(igtl::MessageBase::Pointer& data)
 {
-   if(this->fTracking && FileName!="")
+  if(this->fTracking && FileName!="")
     {
-    this->count++;
-    float temp;
-    igtl::Matrix4x4 matrix;
-
-    const char * ccpFileName = FileName.c_str();
-    FILE *myfile = std::fopen(ccpFileName, "r");
-    //int counter=0;
-    igtl::TrackingDataElement::Pointer ptr;                         //!
-    // std::cerr << NumberOfChannels << std::endl;
-
-    for(int k = 0; k < this->NumberOfChannels; k ++)
-      {
-	this->TrackingMsg->GetTrackingDataElement(k, ptr);
-	int counter=0;
-	while(counter<count*NumberOfChannels){
-	  //if(counter == count-1)break;
-	  for(int i=0; i<=3; i++){
-	    for(int j=0; j<=3; j++){
-	      std::fscanf(myfile, "%f ", &temp);
+      this->count++;
+      float temp;
+      igtl::Matrix4x4 matrix;
+      
+      const char * ccpFileName = FileName.c_str();
+      FILE *myfile = std::fopen(ccpFileName, "r");
+      //int counter=0;
+      igtl::TrackingDataElement::Pointer ptr;                         //!
+      // std::cerr << NumberOfChannels << std::endl;
+      
+      for(int k = 0; k < this->NumberOfChannels; k ++)
+	{
+	  this->TrackingMsg->GetTrackingDataElement(k, ptr);
+	  int counter=0;
+	  while(counter<count*NumberOfChannels){
+	    //if(counter == count-1)break;
+	    for(int i=0; i<=3; i++){
+	      for(int j=0; j<=3; j++){
+		std::fscanf(myfile, "%f ", &temp);
+	      }
+	      std::fscanf(myfile, "\n");
 	    }
-	    std::fscanf(myfile, "\n");
+	    std::fscanf(myfile,"\n");
+	    counter++;
 	  }
-	  std::fscanf(myfile,"\n");
-	  counter++;
-	}
 	  for(int i=0;i<=3;i++){
 	    for(int j=0;j<=3;j++){
 	      std::fscanf(myfile, "%f ", &temp);
@@ -168,14 +169,14 @@ void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
 	  //std::cout << "count="<<count << std::endl;
 	  igtl::PrintMatrix(matrix);
 	  ptr->SetMatrix(matrix);
-      }
-    fclose(myfile);
-    this->TrackingMsg->Pack();     //!
-    data = this->TrackingMsg;
-
-    //  fclose(myfile);
-    //this->TrackingMsg->Pack();
-    //data = this->TrackingMsg;
+	}
+      fclose(myfile);
+      this->TrackingMsg->Pack();     //!
+      data = this->TrackingMsg;
+      
+      //  fclose(myfile);
+      //this->TrackingMsg->Pack();
+      //data = this->TrackingMsg;
     }
   else
     {
@@ -187,89 +188,89 @@ void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
 //------------------------------------------------------------
 int qDataReadingTracker::HandleReceivedMessage(igtl::Socket *socket, igtl::MessageHeader * header)
 {
-
-    std::cerr << "qDataReadingTracker::HandleReceivedMessage() : " << header->GetDeviceType() << std::endl;
-    
-    if (strcmp(header->GetDeviceType(), "STT_TDATA") == 0)
+  
+  std::cerr << "qDataReadingTracker::HandleReceivedMessage() : " << header->GetDeviceType() << std::endl;
+  
+  if (strcmp(header->GetDeviceType(), "STT_TDATA") == 0)
     {
-        igtl::StartTrackingDataMessage::Pointer sttMsg;
-        sttMsg = igtl::StartTrackingDataMessage::New();
-        sttMsg->SetMessageHeader(header);
-        sttMsg->AllocatePack();
-        
-        if (socket && socket->GetConnected())
+      igtl::StartTrackingDataMessage::Pointer sttMsg;
+      sttMsg = igtl::StartTrackingDataMessage::New();
+      sttMsg->SetMessageHeader(header);
+      sttMsg->AllocatePack();
+      
+      if (socket && socket->GetConnected())
         {
-            int r = socket->Receive(sttMsg->GetPackBodyPointer(), sttMsg->GetPackBodySize());
-            if (r == 0)
+	  int r = socket->Receive(sttMsg->GetPackBodyPointer(), sttMsg->GetPackBodySize());
+	  if (r == 0)
             {
-                // Connection closed.
-                return 0;
+	      // Connection closed.
+	      return 0;
             }
         }
-        else
+      else
         {
-            return 0;
+	  return 0;
         }
-        
-        int c = sttMsg->Unpack(1);
-        
-        if (c & igtl::MessageHeader::UNPACK_BODY) // if CRC check is OK
+      
+      int c = sttMsg->Unpack(1);
+      
+      if (c & igtl::MessageHeader::UNPACK_BODY) // if CRC check is OK
         {
-            int interval = sttMsg->GetResolution();
-            if (interval > 100)
-                this->SetInterval(interval);
-            this->fTracking = 1;
-            return 1;
+	  int interval = sttMsg->GetResolution();
+	  if (interval > 100)
+	    this->SetInterval(interval);
+	  this->fTracking = 1;
+	  return 1;
         }
     }
-    else if (strcmp(header->GetDeviceType(), "STP_TDATA") == 0)
+  else if (strcmp(header->GetDeviceType(), "STP_TDATA") == 0)
     {
-        igtl::StopTrackingDataMessage::Pointer stpMsg;
-        stpMsg = igtl::StopTrackingDataMessage::New();
-        stpMsg->SetMessageHeader(header);
-        stpMsg->AllocatePack();
-	//        if (socket && socket->GetConnected())
-        //{
-	//     int r = socket->Receive(stpMsg->GetPackBodyPointer(), stpMsg->GetPackBodySize());
-        //    if (r == 0)
-        //    {
-        //        // Connection closed.
-        //        return 0;
-        //    }
-        //}
-        //else
-        //{
-        //    return 0;
-        //}
-	// 
-        //int c = stpMsg->Unpack(1);
-        //if (c & igtl::MessageHeader::UNPACK_BODY) // if CRC check is OK
-        //{  //up to here
-            this->fTracking = 0;
-            return 1;
-	    // }
+      igtl::StopTrackingDataMessage::Pointer stpMsg;
+      stpMsg = igtl::StopTrackingDataMessage::New();
+      stpMsg->SetMessageHeader(header);
+      stpMsg->AllocatePack();
+      //        if (socket && socket->GetConnected())
+      //{
+      //     int r = socket->Receive(stpMsg->GetPackBodyPointer(), stpMsg->GetPackBodySize());
+      //    if (r == 0)
+      //    {
+      //        // Connection closed.
+      //        return 0;
+      //    }
+      //}
+      //else
+      //{
+      //    return 0;
+      //}
+      // 
+      //int c = stpMsg->Unpack(1);
+      //if (c & igtl::MessageHeader::UNPACK_BODY) // if CRC check is OK
+      //{  //up to here
+      this->fTracking = 0;
+      return 1;
+      // }
     }
-    return 1;
+  return 1;
 }
-    
+
 
 
 
 //------------------------------------------------------------
 void qDataReadingTracker::GetFileMatrix(igtl::Matrix4x4& matrix, std::string filename)
 {
-     float temp;
-    const char * ccpfilename = filename.c_str();
-    FILE *myfile = fopen(ccpfilename, "r");
-    for(int i=0;i<=4;i++){
-        for(int j=0;j<=4;j++){
-
-            std::fscanf(myfile, "%f ", &temp);
-                matrix[i][j]=temp;
-                }
-            }
-        igtl::PrintMatrix(matrix);
-        fclose(myfile);
+  float temp;
+  const char * ccpfilename = filename.c_str();
+  FILE *myfile = fopen(ccpfilename, "r");
+  for(int i=0;i<=4;i++){
+    for(int j=0;j<=4;j++){
+      
+      std::fscanf(myfile, "%f ", &temp);
+      matrix[i][j]=temp;
+    }
+  }
+  igtl::PrintMatrix(matrix);
+  fclose(myfile);
   
 }
 // //    }
