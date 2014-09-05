@@ -56,7 +56,7 @@ protected slots:
 protected:
 virtual void RegisterHandlers(igtl::TCPConnectorServerOIGTL * NOTUSED(connector)) {};
  virtual void GenerateData(igtl::MessageBase::Pointer& NOTUSED(data)) {};
-    virtual void ReadData(igtl::MessageBase::Pointer& NOTUSED(data), std::string) {};
+    virtual void ReadData(igtl::MessageBase::Pointer& NOTUSED(data)) {};
 
 protected:
 

@@ -41,11 +41,11 @@ void qDataGeneratorBase::SetConnector(igtl::TCPConnectorServerOIGTL * connector)
 //-----------------------------------------------------------------------------
 void qDataGeneratorBase::Start()
 {
+  
   this->Timer = new QTimer(this);
   connect(this->Timer, SIGNAL(timeout()), this, SLOT(ProcessTimer()));
   this->Timer->start(this->TimerInterval); 
 }
-
 
 //-----------------------------------------------------------------------------
 void qDataGeneratorBase::Stop()
@@ -71,8 +71,15 @@ void qDataGeneratorBase::ProcessTimer()
       this->Connector->GetStatus() == igtl::TCPConnectorBase::STATUS_CONNECTED)
     {
     igtl::MessageBase::Pointer message;
-    this->GenerateData(message);
-    
+   //Must somehow use if() to decide whether to use GenerateData or ReadData.
+    //if(i==0)
+    //  {
+	this->GenerateData(message);
+	//  }
+	// else
+	//  {
+	this->ReadData(message);
+	// }
     if (message.IsNotNull())
       {
 	this->Connector->PushMessage(message);

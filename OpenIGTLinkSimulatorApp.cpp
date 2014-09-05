@@ -193,8 +193,8 @@ void OpenIGTLinkSimulatorApp::clientActivateClicked()
         fClientActive = false;
         if (oigtlConnector.IsNotNull())
         {
-	  // std::cerr << "Deactivating OpenIGTLink connector with:" << std::endl;
-          //  std::cerr << "    Port: " << igtlPort.toInt() << std::endl;
+	   std::cerr << "Deactivating OpenIGTLink connector with:" << std::endl;
+            std::cerr << "    Port: " << igtlPort.toInt() << std::endl;
             oigtlConnector->Deactivate();
         }
         rbTrackingFile->setEnabled(true);
@@ -327,7 +327,7 @@ void OpenIGTLinkSimulatorApp::channel(int i)
 {
   std::cerr << "Channel changed to:" << i << std::endl;
   this->TrackingDataReader->ChannelChanged(i);
-  //  this->TrackingDataGenerator->ChannelChanged(i);
+  this->TrackingDataGenerator->ChannelChanged(i);
 }
 
 void OpenIGTLinkSimulatorApp::quit() 

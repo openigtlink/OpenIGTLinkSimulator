@@ -74,20 +74,21 @@ void qDataGeneratorTracking::GenerateData(igtl::MessageBase::Pointer& data)
 
   if (this->fTracking)
     {
-    igtl::Matrix4x4 matrix;
-    igtl::TrackingDataElement::Pointer ptr;
-    
-    for (int i = 0; i < this->NumberOfChannels; i ++)
-      {
-      this->TrackingMsg->GetTrackingDataElement(i, ptr);
-      GetRandomTestMatrix(matrix, this->Phi[i], this->Theta[i]);
-      ptr->SetMatrix(matrix);
-      this->Phi[i] += 0.1*(float)(i+1);
-      this->Theta[i] += 0.05*(float)(i+1);
-      }
-    
-    this->TrackingMsg->Pack();
-    data = this->TrackingMsg;
+      igtl::Matrix4x4 matrix;
+      igtl::TrackingDataElement::Pointer ptr;
+      for (int i = 0; i < this->NumberOfChannels; i ++)
+	{
+	  std::cerr << "Data for Channel:" << i << std::endl;
+	  this->TrackingMsg->GetTrackingDataElement(i, ptr);
+	  GetRandomTestMatrix(matrix, this->Phi[i], this->Theta[i]);
+	  ptr->SetMatrix(matrix);
+	  
+	  this->Phi[i] += 0.1*(float)(i+1);
+	  this->Theta[i] += 0.05*(float)(i+1);
+	}
+      
+      this->TrackingMsg->Pack();
+      data = this->TrackingMsg;
     }
 }
 
@@ -170,9 +171,9 @@ void qDataGeneratorTracking::GetRandomTestMatrix(igtl::Matrix4x4& matrix, float 
   float orientation[4];
 
   // random position
-  position[0] = 50.0 * cos(phi) + 20.0 * sin(phi);
-  position[1] = 2.0 * cos(phi*phi);
-  position[2] = 30.0 * sin(phi);
+  position[0] = 50.0 * cos(phi) + 50.0 * sin(phi);
+  position[1] = 50.0 * sin(phi*phi);
+  position[2] = 30.0 * cos(phi);
   phi = phi + 0.2;
 
   // random orientation
@@ -192,27 +193,29 @@ void qDataGeneratorTracking::GetRandomTestMatrix(igtl::Matrix4x4& matrix, float 
   igtl::PrintMatrix(matrix);
 }
 //-----------------------------------------------------------------------------
-/*
+
 void qDataGeneratorTracking::ChannelChanged(int i)
 {
-   this->NumberOfChannels = i;
-    
-    this->TrackingElement.resize(this->NumberOfChannels);
-    this->Phi.resize(this->NumberOfChannels);
-    this->Theta.resize(this->NumberOfChannels);
-    
-    this->fTracking = 0;
-    
-    for (int i = 0; i < this->NumberOfChannels; i ++)
+  this->TrackingMsg = igtl::TrackingDataMessage::New();
+  this->TrackingMsg->SetDeviceName("Tracker");
+  this->NumberOfChannels = i;
+  
+  this->TrackingElement.resize(this->NumberOfChannels);
+  this->Phi.resize(this->NumberOfChannels);
+  this->Theta.resize(this->NumberOfChannels);
+  
+  this->fTracking = 0;
+  
+  for (int i = 0; i < this->NumberOfChannels; i ++)
     {
-        std::stringstream ss;
-        ss << "Channel " << i;
-        this->TrackingElement[i] = igtl::TrackingDataElement::New();
-        this->TrackingElement[i]->SetName(ss.str().c_str());
-        this->TrackingElement[i]->SetType(igtl::TrackingDataElement::TYPE_TRACKER);
-        this->TrackingMsg->AddTrackingDataElement(this->TrackingElement[i]);
-        this->Phi[i] = 0.0;
-        this->Theta[i] = 0.0;
+      std::stringstream ss;
+      ss << "Channel " << i;
+      this->TrackingElement[i] = igtl::TrackingDataElement::New();
+      this->TrackingElement[i]->SetName(ss.str().c_str());
+      this->TrackingElement[i]->SetType(igtl::TrackingDataElement::TYPE_TRACKER);
+      this->TrackingMsg->AddTrackingDataElement(this->TrackingElement[i]);
+      this->Phi[i] = 0.0;
+      this->Theta[i] = 0.0;
     }
 }
-*/
+

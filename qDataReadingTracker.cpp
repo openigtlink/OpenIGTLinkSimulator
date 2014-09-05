@@ -73,40 +73,33 @@ void qDataReadingTracker::RegisterHandlers(igtl::TCPConnectorServerOIGTL * conne
 //----------------------------------------------------------------------------
 void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
 {
-<<<<<<< HEAD
-  if(FileName!="") {
-    this->count++;
-    float temp;
-    float matrix[4][4];
-    // igtl::Matrix4x4 matrix;
-=======
-  if(!this->fTracking && FileName!="")
+  /* if(this->fTracking && FileName!="")
     {
     this->count++;
     float temp;
-    //    float matrix[4][4];
     igtl::Matrix4x4 matrix;
->>>>>>> my-branch
+
     const char * ccpFileName = FileName.c_str();
     FILE *myfile = std::fopen(ccpFileName, "r");
     //int counter=0;
     igtl::TrackingDataElement::Pointer ptr;                         //!
     // std::cerr << NumberOfChannels << std::endl;
+
     for(int k = 0; k < this->NumberOfChannels; k ++)
-    	{
-	  this->TrackingMsg->GetTrackingDataElement(k, ptr);
-	  int counter=0;
-	  while(counter<count*NumberOfChannels){
-	     //if(counter == count-1)break;
-	    for(int i=0; i<=3; i++){
-	      for(int j=0; j<=3; j++){
-	  	std::fscanf(myfile, "%f ", &temp);
-	      }
-	      std::fscanf(myfile, "\n");
+      {
+	this->TrackingMsg->GetTrackingDataElement(k, ptr);
+	int counter=0;
+	while(counter<count*NumberOfChannels){
+	  //if(counter == count-1)break;
+	  for(int i=0; i<=3; i++){
+	    for(int j=0; j<=3; j++){
+	      std::fscanf(myfile, "%f ", &temp);
 	    }
-	    std::fscanf(myfile,"\n");
-	    counter++;
-	   }
+	    std::fscanf(myfile, "\n");
+	  }
+	  std::fscanf(myfile,"\n");
+	  counter++;
+	}
 	  for(int i=0;i<=3;i++){
 	    for(int j=0;j<=3;j++){
 	      std::fscanf(myfile, "%f ", &temp);
@@ -114,64 +107,79 @@ void qDataReadingTracker::GenerateData(igtl::MessageBase::Pointer& data)
 	    }
 	    std::fscanf(myfile,"\n\n");
 	  }
-	/*
-	  int counter=0;
-	  while(1){
-	    for(int i=0;i<=3;i++){
-	      for(int j=0;j<=3;j++){
-		std::fscanf(myfile, "%f ", &temp);
-		matrix[i][j]=temp;
-	      }
-	    }
-	    if(counter == count) break;
-	    counter++;
-	  }
-	*/
 	  //  std::cout << "counter="<<counter << std::endl;
 	  //std::cout << "count="<<count << std::endl;
 	  igtl::PrintMatrix(matrix);
 	  ptr->SetMatrix(matrix);
-	  // fclose(myfile);
-	}
-<<<<<<< HEAD
-      fclose(myfile);
-      // this->TrackingMsg->Pack();
-      data = this->TrackingMsg;
-=======
+      }
     fclose(myfile);
-    this->TrackingMsg->Pack();
+    this->TrackingMsg->Pack();     //!
     data = this->TrackingMsg;
->>>>>>> my-branch
-  }
 
-
+    //  fclose(myfile);
+    //this->TrackingMsg->Pack();
+    //data = this->TrackingMsg;
+    }
   else
     {
-      std::cerr << "Insufficient file name." << std::endl;
+      //   std::cerr << "Insufficient file name." << std::endl;
     } 
+  */
 }
 
 //----------------------------------------------------------------------------
-void qDataReadingTracker::ReadData(igtl::MessageBase::Pointer& data, std::string filename)
+  void qDataReadingTracker::ReadData(igtl::MessageBase::Pointer& data)
 {
-    
-    if (this->fTracking)
+   if(this->fTracking && FileName!="")
     {
-        igtl::Matrix4x4 matrix;
-        igtl::TrackingDataElement::Pointer ptr;
-        
-        for (int i = 0; i < this->NumberOfChannels; i ++)
-        {
-            this->TrackingMsg->GetTrackingDataElement(i, ptr);
-            GetFileMatrix(matrix,filename);
-            ptr->SetMatrix(matrix);
-            //this->Phi[i] += 0.1*(float)(i+1);
-            //this->Theta[i] += 0.05*(float)(i+1);
-        }
-        
-        this->TrackingMsg->Pack();
-        data = this->TrackingMsg;
-        //   }
+    this->count++;
+    float temp;
+    igtl::Matrix4x4 matrix;
+
+    const char * ccpFileName = FileName.c_str();
+    FILE *myfile = std::fopen(ccpFileName, "r");
+    //int counter=0;
+    igtl::TrackingDataElement::Pointer ptr;                         //!
+    // std::cerr << NumberOfChannels << std::endl;
+
+    for(int k = 0; k < this->NumberOfChannels; k ++)
+      {
+	this->TrackingMsg->GetTrackingDataElement(k, ptr);
+	int counter=0;
+	while(counter<count*NumberOfChannels){
+	  //if(counter == count-1)break;
+	  for(int i=0; i<=3; i++){
+	    for(int j=0; j<=3; j++){
+	      std::fscanf(myfile, "%f ", &temp);
+	    }
+	    std::fscanf(myfile, "\n");
+	  }
+	  std::fscanf(myfile,"\n");
+	  counter++;
+	}
+	  for(int i=0;i<=3;i++){
+	    for(int j=0;j<=3;j++){
+	      std::fscanf(myfile, "%f ", &temp);
+	      matrix[i][j]=temp;
+	    }
+	    std::fscanf(myfile,"\n\n");
+	  }
+	  //  std::cout << "counter="<<counter << std::endl;
+	  //std::cout << "count="<<count << std::endl;
+	  igtl::PrintMatrix(matrix);
+	  ptr->SetMatrix(matrix);
+      }
+    fclose(myfile);
+    this->TrackingMsg->Pack();     //!
+    data = this->TrackingMsg;
+
+    //  fclose(myfile);
+    //this->TrackingMsg->Pack();
+    //data = this->TrackingMsg;
+    }
+  else
+    {
+      //   std::cerr << "Insufficient file name." << std::endl;
     }
 }
 
@@ -250,7 +258,7 @@ int qDataReadingTracker::HandleReceivedMessage(igtl::Socket *socket, igtl::Messa
 //------------------------------------------------------------
 void qDataReadingTracker::GetFileMatrix(igtl::Matrix4x4& matrix, std::string filename)
 {
-  /*    float temp;
+     float temp;
     const char * ccpfilename = filename.c_str();
     FILE *myfile = fopen(ccpfilename, "r");
     for(int i=0;i<=4;i++){
@@ -262,7 +270,7 @@ void qDataReadingTracker::GetFileMatrix(igtl::Matrix4x4& matrix, std::string fil
             }
         igtl::PrintMatrix(matrix);
         fclose(myfile);
-  */
+  
 }
 // //    }
 
@@ -301,24 +309,27 @@ void qDataReadingTracker::GetFileMatrix(igtl::Matrix4x4& matrix, std::string fil
 //------------------------------------------------------------
 void qDataReadingTracker::ChannelChanged(int i)
 {
-    this->NumberOfChannels = i;
-    
-    this->TrackingElement.resize(this->NumberOfChannels);
-    this->Phi.resize(this->NumberOfChannels);
-    this->Theta.resize(this->NumberOfChannels);
-    
-    this->fTracking = 0;
-    
-    for (int i = 0; i < this->NumberOfChannels; i ++)
+  this->TrackingMsg = igtl::TrackingDataMessage::New();
+  this->TrackingMsg->SetDeviceName("Tracker");
+  
+  this->NumberOfChannels = i;
+  
+  this->TrackingElement.resize(this->NumberOfChannels);
+  this->Phi.resize(this->NumberOfChannels);
+  this->Theta.resize(this->NumberOfChannels);
+  
+  this->fTracking = 0;
+  
+  for (int i = 0; i < this->NumberOfChannels; i ++)
     {
-        std::stringstream ss;
-        ss << "Channel " << i;
-        this->TrackingElement[i] = igtl::TrackingDataElement::New();
-        this->TrackingElement[i]->SetName(ss.str().c_str());
-        this->TrackingElement[i]->SetType(igtl::TrackingDataElement::TYPE_TRACKER);
-        this->TrackingMsg->AddTrackingDataElement(this->TrackingElement[i]);
-        this->Phi[i] = 0.0;
-        this->Theta[i] = 0.0;
+      std::stringstream ss;
+      ss << "Channel " << i;
+      this->TrackingElement[i] = igtl::TrackingDataElement::New();
+      this->TrackingElement[i]->SetName(ss.str().c_str());
+      this->TrackingElement[i]->SetType(igtl::TrackingDataElement::TYPE_TRACKER);
+      this->TrackingMsg->AddTrackingDataElement(this->TrackingElement[i]);
+      this->Phi[i] = 0.0;
+      this->Theta[i] = 0.0;
     }
   
 }

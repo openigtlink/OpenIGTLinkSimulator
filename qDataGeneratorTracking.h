@@ -27,7 +27,7 @@ public:
   virtual ~qDataGeneratorTracking();
 
   virtual const char * GetClassName() { return "qDataGeneratorTracking"; };
-  //virtual void ChannelChanged(int i);
+  virtual void ChannelChanged(int i);
 
 protected:
 

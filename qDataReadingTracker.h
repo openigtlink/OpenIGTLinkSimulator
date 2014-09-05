@@ -38,18 +38,15 @@ protected:
     virtual void RegisterHandlers(igtl::TCPConnectorServerOIGTL * connector);
     virtual void GenerateData(igtl::MessageBase::Pointer& data);
 
-    virtual void ReadData(igtl::MessageBase::Pointer& data, std::string);
+    virtual void ReadData(igtl::MessageBase::Pointer& data);
     
     virtual int  HandleReceivedMessage(igtl::Socket *socket, igtl::MessageHeader * header);
 
     // Function to Read matrix.
     void    GetFileMatrix(igtl::Matrix4x4& matrix, std::string);
-<<<<<<< HEAD
-    int count;
+    // int count;
     
-=======
 
->>>>>>> my-branch
 protected:
     
     igtl::TrackingDataMessage::Pointer TrackingMsg;
@@ -62,12 +59,8 @@ protected:
     
     int fTracking;
 
-<<<<<<< HEAD
-    std::string FileName;    
-=======
     std::string FileName;   
     int count;
->>>>>>> my-branch
 };
 
 #endif
