@@ -1,6 +1,6 @@
 /*=========================================================================
   
-  Program:   Data Generator Tracking Class for OpenIGTLink Simulator
+  Program:   Data Reading Tracking Class for OpenIGTLink Simulator
   Language:  C++
   
   Copyright (c) Brigham and Women's Hospital. All rights reserved.
@@ -11,31 +11,32 @@
   
   =========================================================================*/
 
-#ifndef __qDataGeneratorTracking_H
-#define __qDataGeneratorTracking_H
+#ifndef __qDataReadingTracking_H
+#define __qDataReadingTracking_H
+
+#include <string>
+
 #include "qDataGeneratorBase.h"
 #include "igtlTrackingDataMessage.h"
 
-class IGTLCommon_EXPORT qDataGeneratorTracking : public qDataGeneratorBase
+class IGTLCommon_EXPORT qDataReadingTracker : public qDataGeneratorBase
 {
   Q_OBJECT
   
  public:
   
-  qDataGeneratorTracking();
-  virtual ~qDataGeneratorTracking(); 
-  virtual const char * GetClassName() { return "qDataGeneratorTracking"; };
-  virtual void ChannelChanged(int i);
+  qDataReadingTracker();
+  virtual ~qDataReadingTracker();
+  virtual const char * GetClassName() { return "qDataReadingTracking"; };
 
+  void SetFileName(std::string name) { this->FileName = name; };
+  virtual void ChannelChanged(int i);
+  
  protected:
   
-  virtual void RegisterHandlers(igtl::TCPConnectorServerOIGTL * connector);  
-  virtual void GenerateData(igtl::MessageBase::Pointer& data);
+  virtual void RegisterHandlers(igtl::TCPConnectorServerOIGTL * connector);
+  virtual void ReadData(igtl::MessageBase::Pointer& data);
   virtual int  HandleReceivedMessage(igtl::Socket *socket, igtl::MessageHeader * header);
-
-  // Function to generate random matrix.
-  void    GetRandomTestMatrix(igtl::Matrix4x4& matrix, float phi, float theta);
-  
   
  protected:
   
@@ -49,6 +50,8 @@ class IGTLCommon_EXPORT qDataGeneratorTracking : public qDataGeneratorBase
   
   int fTracking;
   
+  std::string FileName;   
+  int count;
 };
 
 #endif

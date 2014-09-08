@@ -44,13 +44,14 @@ set(OpenIGTLinkSimulator_SOURCES
     OpenIGTLinkSimulatorApp.cpp
     qDataGeneratorBase.cpp
     qDataGeneratorTracking.cpp
+    qDataReadingTracker.cpp
     igtlTCPConnectorBase.cxx
     igtlTCPConnectorServer.cxx
     igtlTCPConnectorClient.cxx
     igtlTCPConnectorServerOIGTL.cxx
 )
 
-set(OpenIGTLinkSimulator_HEADERS OpenIGTLinkSimulatorApp.h qDataGeneratorBase.h qDataGeneratorTracking.h)
+set(OpenIGTLinkSimulator_HEADERS OpenIGTLinkSimulatorApp.h qDataGeneratorBase.h qDataGeneratorTracking.h qDataReadingTracker.h)
 set(OpenIGTLinkSimulator_FORMS OpenIGTLinkSimulatorWindow.ui)
 #set(OpenIGTLinkSimulator_RESOURCES images.qrc)
 

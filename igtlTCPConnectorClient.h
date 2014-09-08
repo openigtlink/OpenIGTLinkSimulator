@@ -9,7 +9,7 @@
   the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
   PURPOSE.  See the above copyright notices for more information.
 
-=========================================================================*/
+  =========================================================================*/
 
 #ifndef __TCPConnectorClient_H
 #define __TCPConnectorClient_H
@@ -23,39 +23,39 @@
 namespace igtl
 {
 
-class IGTLCommon_EXPORT TCPConnectorClient : public TCPConnectorBase
-{
-public:
+  class IGTLCommon_EXPORT TCPConnectorClient : public TCPConnectorBase
+  {
+  public:
   
-  typedef TCPConnectorClient        Self;
-  typedef Object  Superclass;
-  typedef SmartPointer<Self>        Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+    typedef TCPConnectorClient        Self;
+    typedef Object  Superclass;
+    typedef SmartPointer<Self>        Pointer;
+    typedef SmartPointer<const Self>  ConstPointer;
 
-  igtlTypeMacro(igtl::TCPConnectorClient, igtl::TCPConnectorBase)
-  igtlNewMacro(igtl::TCPConnectorClient);
+    igtlTypeMacro(igtl::TCPConnectorClient, igtl::TCPConnectorBase)
+      igtlNewMacro(igtl::TCPConnectorClient);
 
-public:
+  public:
 
-  virtual const char * GetClassName() { return "Client"; };
+    virtual const char * GetClassName() { return "Client"; };
 
-protected:
-  TCPConnectorClient();
-  ~TCPConnectorClient();
+  protected:
+    TCPConnectorClient();
+    ~TCPConnectorClient();
 
-  void PrintSelf(std::ostream& os) const;
+    void PrintSelf(std::ostream& os) const;
 
-  virtual int Initialize();
-  virtual int WaitForConnection();
-  virtual int ReceiveMessage();
-  virtual int CloseConnection();
-  virtual int Finalize();
+    virtual int Initialize();
+    virtual int WaitForConnection();
+    virtual int ReceiveMessage();
+    virtual int CloseConnection();
+    virtual int Finalize();
   
-protected:
+  protected:
 
-  igtl::ClientSocket::Pointer     Socket;
+    igtl::ClientSocket::Pointer     Socket;
 
-};
+  };
 
 }
 

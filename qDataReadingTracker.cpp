@@ -1,6 +1,6 @@
 /*=========================================================================
   
-  Program:   Data Generator Tracking Class for OpenIGTLink Simulator
+  Program:   Data Reading Tracking Class for OpenIGTLink Simulator
   Language:  C++
   
   Copyright (c) Brigham and Women's Hospital. All rights reserved.
@@ -10,18 +10,13 @@
   PURPOSE.  See the above copyright notices for more information.
   
   =========================================================================*/
-
-
-#include <cstring>
-#include <sstream>
-#include <cmath>
-#include "qDataGeneratorTracking.h"
+#include <string>
+#include "qDataReadingTracker.h"
 
 
 //-----------------------------------------------------------------------------
-qDataGeneratorTracking::qDataGeneratorTracking(): qDataGeneratorBase()
-{
-  
+qDataReadingTracker::qDataReadingTracker(): qDataGeneratorBase()
+{  
   //------------------------------------------------------------
   // Allocate TrackingData Message Class
   //
@@ -37,9 +32,9 @@ qDataGeneratorTracking::qDataGeneratorTracking(): qDataGeneratorBase()
   this->TrackingElement.resize(this->NumberOfChannels);
   this->Phi.resize(this->NumberOfChannels);
   this->Theta.resize(this->NumberOfChannels);
-  
+    
   this->fTracking = 0;
-  
+    
   for (int i = 0; i <this->NumberOfChannels; i ++)
     {
       std::stringstream ss;
@@ -56,49 +51,80 @@ qDataGeneratorTracking::qDataGeneratorTracking(): qDataGeneratorBase()
 
 
 //-----------------------------------------------------------------------------
-qDataGeneratorTracking::~qDataGeneratorTracking()
+qDataReadingTracker::~qDataReadingTracker()
 {
 }
 
 
 //-----------------------------------------------------------------------------
-void qDataGeneratorTracking::RegisterHandlers(igtl::TCPConnectorServerOIGTL * connector)  
+void qDataReadingTracker::RegisterHandlers(igtl::TCPConnectorServerOIGTL * connector)
 {
   connector->RegisterMessageHandler("STT_TDATA", this);
   connector->RegisterMessageHandler("STP_TDATA", this);
 }
 
 
-//-----------------------------------------------------------------------------
-void qDataGeneratorTracking::GenerateData(igtl::MessageBase::Pointer& data)
+//----------------------------------------------------------------------------
+void qDataReadingTracker::ReadData(igtl::MessageBase::Pointer& data)
 {
-  
-  if (this->fTracking)
+  if(this->fTracking && FileName!="")
     {
+      float temp;
       igtl::Matrix4x4 matrix;
-      igtl::TrackingDataElement::Pointer ptr;
-      for (int i = 0; i < this->NumberOfChannels; i ++)
-	{
-	  this->TrackingMsg->GetTrackingDataElement(i, ptr);
-	  GetRandomTestMatrix(matrix, this->Phi[i], this->Theta[i]);
-	  ptr->SetMatrix(matrix);
-	  
-	  this->Phi[i] += 0.1*(float)(i+1);
-	  this->Theta[i] += 0.05*(float)(i+1);
-	}
+      this->count++;
+ 
+      const char * ccpFileName = FileName.c_str();
+      FILE *myfile = std::fopen(ccpFileName, "r");
       
+      igtl::TrackingDataElement::Pointer ptr;
+      
+      for(int k = 0; k < this->NumberOfChannels; k ++)
+	{
+	  this->TrackingMsg->GetTrackingDataElement(k, ptr);
+	  int counter=0;
+	  while(counter<count*NumberOfChannels)
+	    {
+	    for(int i=0; i<=3; i++)
+	      {
+		for(int j=0; j<=3; j++)
+		  {
+		    std::fscanf(myfile, "%f ", &temp);
+		  }
+		std::fscanf(myfile, "\n");
+	      }
+	    std::fscanf(myfile,"\n");
+	    counter++;
+	    }
+	  
+	  for(int i=0;i<=3;i++)
+	    {
+	      for(int j=0;j<=3;j++)
+		{
+		  std::fscanf(myfile, "%f ", &temp);
+		  matrix[i][j]=temp;
+		}
+	      std::fscanf(myfile,"\n\n");
+	    }
+	  igtl::PrintMatrix(matrix);
+	  ptr->SetMatrix(matrix);
+	}
+      fclose(myfile);
       this->TrackingMsg->Pack();
       data = this->TrackingMsg;
     }
+  else
+    {
+    }
+
 }
 
 
 //------------------------------------------------------------
-int qDataGeneratorTracking::HandleReceivedMessage(igtl::Socket *socket, igtl::MessageHeader * header)
+int qDataReadingTracker::HandleReceivedMessage(igtl::Socket *socket, igtl::MessageHeader * header)
 {
   
-  std::cerr << "qDataGeneratorTracking::HandleReceivedMessage() : " << header->GetDeviceType() << std::endl;
-
+  std::cerr << "qDataReadingTracker::HandleReceivedMessage() : " << header->GetDeviceType() << std::endl;
+  
   if (strcmp(header->GetDeviceType(), "STT_TDATA") == 0)
     {
       igtl::StartTrackingDataMessage::Pointer sttMsg;
@@ -107,29 +133,29 @@ int qDataGeneratorTracking::HandleReceivedMessage(igtl::Socket *socket, igtl::Me
       sttMsg->AllocatePack();
       
       if (socket && socket->GetConnected())
-	{
+        {
 	  int r = socket->Receive(sttMsg->GetPackBodyPointer(), sttMsg->GetPackBodySize());
 	  if (r == 0)
-	    {
+            {
 	      // Connection closed.
 	      return 0;
-	    }
-	}
+            }
+        }
       else
-	{
+        {
 	  return 0;
-	}
+        }
       
       int c = sttMsg->Unpack(1);
       
       if (c & igtl::MessageHeader::UNPACK_BODY) // if CRC check is OK
-	{
+        {
 	  int interval = sttMsg->GetResolution();
 	  if (interval > 100)
 	    this->SetInterval(interval);
 	  this->fTracking = 1;
 	  return 1;
-	}
+        }
     }
   else if (strcmp(header->GetDeviceType(), "STP_TDATA") == 0)
     {
@@ -137,67 +163,38 @@ int qDataGeneratorTracking::HandleReceivedMessage(igtl::Socket *socket, igtl::Me
       stpMsg = igtl::StopTrackingDataMessage::New();
       stpMsg->SetMessageHeader(header);
       stpMsg->AllocatePack();
-      //if (socket && socket->GetConnected())
-      //  {
-      //  //int r = socket->Receive(stpMsg->GetPackBodyPointer(), stpMsg->GetPackBodySize());
-      //  //if (r == 0)
-      //  //  {
-      //  //  // Connection closed.
-      //  //  return 0;
-      //  //  }
-      //  }
+      //        if (socket && socket->GetConnected())
+      //{
+      //     int r = socket->Receive(stpMsg->GetPackBodyPointer(), stpMsg->GetPackBodySize());
+      //    if (r == 0)
+      //    {
+      //        // Connection closed.
+      //        return 0;
+      //    }
+      //}
       //else
-      //  {
-      //  return 0;
-      //  }
-      //
+      //{
+      //    return 0;
+      //}
+      // 
       //int c = stpMsg->Unpack(1);
       //if (c & igtl::MessageHeader::UNPACK_BODY) // if CRC check is OK
-      //  {
+      //{  //up to here
       this->fTracking = 0;
       return 1;
-      //}
+      // }
     }
   return 1;
-  
+
 }
 
 
 //------------------------------------------------------------
-void qDataGeneratorTracking::GetRandomTestMatrix(igtl::Matrix4x4& matrix, float phi, float theta)
-{
-  
-  float position[3];
-  float orientation[4];
-  
-  // random position
-  position[0] = 50.0 * cos(phi);
-  position[1] = 50.0 * sin(phi);
-  position[2] = 50.0 * cos(phi);
-  phi = phi + 0.2;
-  
-  // random orientation
-  orientation[0]=0.0;
-  orientation[1]=0.6666666666*cos(theta);
-  orientation[2]=0.577350269189626;
-  orientation[3]=0.6666666666*sin(theta);
-  theta = theta + 0.1;
-  
-  //igtl::Matrix4x4 matrix;
-  igtl::QuaternionToMatrix(orientation, matrix);
-  
-  matrix[0][3] = position[0];
-  matrix[1][3] = position[1];
-  matrix[2][3] = position[2];
-  
-  igtl::PrintMatrix(matrix);
-}
-//-----------------------------------------------------------------------------
-
-void qDataGeneratorTracking::ChannelChanged(int i)
+void qDataReadingTracker::ChannelChanged(int i)
 {
   this->TrackingMsg = igtl::TrackingDataMessage::New();
   this->TrackingMsg->SetDeviceName("Tracker");
+  
   this->NumberOfChannels = i;
   
   this->TrackingElement.resize(this->NumberOfChannels);
@@ -219,4 +216,3 @@ void qDataGeneratorTracking::ChannelChanged(int i)
     }
 
 }
-
