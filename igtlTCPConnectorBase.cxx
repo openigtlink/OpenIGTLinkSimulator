@@ -65,7 +65,8 @@ namespace igtl
     con->Active = 0;
     if (!con->Initialize())
       {
-	std::cerr << "TCPConnectorBase::MonitorThreadFunction(): Failed to initialize a server socket." << std::endl;
+	  std::cerr << "TCPConnectorBase::MonitorThreadFunction(): Failed to initialize a server socket." << std::endl;
+	  con->Initialize();
 	return;
       }
     
